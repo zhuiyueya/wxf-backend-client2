@@ -1,4 +1,4 @@
-package top.xcyyds.wxfbackendclient.module.user.repository;
+package top.xcyyds.wxfbackendclient.module.user.persistence.repository;
 
 /**
  * @Author: chasemoon
@@ -7,5 +7,7 @@ package top.xcyyds.wxfbackendclient.module.user.repository;
  * @Version:
  */
 
+
 public class MajorRepository {
+
 }
