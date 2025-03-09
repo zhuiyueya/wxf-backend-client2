@@ -8,8 +8,19 @@ package top.xcyyds.wxfbackendclient.module.auth.pojo.dto;
  */
 
 
-
+@lombok.Data
 public class WechatLoginRequest {
-
+    /**
+     * wx.login获取的临时code
+     */
+    private String code;
+    /**
+     * 可选，用户授权后通过wx.getUserProfile获取的加密数据
+     */
+    private String encryptedData;
+    /**
+     * 可选，加密算法的初始向量
+     */
+    private String iv;
 }
 
