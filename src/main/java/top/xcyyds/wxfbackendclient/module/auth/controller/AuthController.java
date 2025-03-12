@@ -1,5 +1,16 @@
 package top.xcyyds.wxfbackendclient.module.auth.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import top.xcyyds.wxfbackendclient.common.Result;
+import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginResponse;
+import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.PhoneLoginRequest;
+import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.WechatLoginRequest;
+import top.xcyyds.wxfbackendclient.module.auth.service.impl.AuthService;
+
 /**
  * @Author: chasemoon
  * @CreateTime: 2025-03-09
@@ -7,5 +18,31 @@ package top.xcyyds.wxfbackendclient.module.auth.controller;
  * @Version:
  */
 
+@RestController
+@RequestMapping("/api/v1/auth")
 public class AuthController {
+
+    /*
+     * @Description: 微信登录的Controller,接收前端微信登录请求，并调用业务逻辑
+     * @param  WechatLoginRequest
+     * @return: Result<LoginResponse>
+     * @Author:  chasemoon
+     * @date:  2025/3/12 08:49
+     */
+    @PostMapping("/wechat-login")
+    public Result<LoginResponse> wechatLogin(@RequestBody WechatLoginRequest request) {
+        return null;
+    }
+
+    /*
+     * @Description: 手机号登录的Controller,接收前端手机号登录请求，并调用业务逻辑
+     * @param  PhoneLoginRequest
+     * @return: Result<LoginResponse>
+     * @Author:  chasemoon
+     * @date:  2025/3/12 08:49
+     */
+    @PostMapping("/phone-login")
+    public Result<LoginResponse>phoneLogin(@RequestBody PhoneLoginRequest request) {
+        return null;
+    }
 }
