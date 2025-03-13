@@ -4,22 +4,14 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 /**
  * @Author: chasemoon
- * @CreateTime: 2025-03-09
+ * @CreateTime: 2025-03-13
  * @Description:
  * @Version:
  */
 
-
-@lombok.Data
-public class WechatLoginRequest extends LoginRequest {
-    /**
-     * wx.login获取的临时code
-     */
-    private String code;
-
+public class StudentIdLoginRequest extends LoginRequest {
     @Override
     public LoginType getLoginType() {
         return null;
     }
 }
-

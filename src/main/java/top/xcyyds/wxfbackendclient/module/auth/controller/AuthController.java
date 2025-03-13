@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.xcyyds.wxfbackendclient.common.Result;
+import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginRequest;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginResponse;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.PhoneLoginRequest;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.WechatLoginRequest;
@@ -22,6 +23,8 @@ import top.xcyyds.wxfbackendclient.module.auth.service.impl.AuthService;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
+    @Autowired
+    private AuthService authService;
     /*
      * @Description: 微信登录的Controller,接收前端微信登录请求，并调用业务逻辑
      * @param  WechatLoginRequest
@@ -29,20 +32,10 @@ public class AuthController {
      * @Author:  chasemoon
      * @date:  2025/3/12 08:49
      */
-    @PostMapping("/wechat-login")
-    public Result<LoginResponse> wechatLogin(@RequestBody WechatLoginRequest request) {
+    @PostMapping("/login")
+    public Result<LoginResponse> wechatLogin(@RequestBody LoginRequest request) {
         return null;
     }
 
-    /*
-     * @Description: 手机号登录的Controller,接收前端手机号登录请求，并调用业务逻辑
-     * @param  PhoneLoginRequest
-     * @return: Result<LoginResponse>
-     * @Author:  chasemoon
-     * @date:  2025/3/12 08:49
-     */
-    @PostMapping("/phone-login")
-    public Result<LoginResponse>phoneLogin(@RequestBody PhoneLoginRequest request) {
-        return null;
-    }
+
 }

@@ -1,6 +1,6 @@
 package top.xcyyds.wxfbackendclient.module.user.pojo.entity;
 
-import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginMethod;
+import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 /**
  * @Author: chasemoon
@@ -17,7 +17,7 @@ public class UserAuth {
     /**
      * 登录方式类型
      */
-    private LoginMethod authMethod;
+    private LoginType authMethod;
     /**
      * 唯一标识（如openid/加密手机号）
      */
