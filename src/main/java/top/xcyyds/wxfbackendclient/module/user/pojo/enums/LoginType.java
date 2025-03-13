@@ -8,15 +8,15 @@ package top.xcyyds.wxfbackendclient.module.user.pojo.enums;
  */
 
 
-public enum LoginMethod {
-    QQ(0,"qq"),
-    WECHAT(1,"wx"),
-    STUDENT_ID(2,"sid"),
-    PHONE(3,"phone");
+public enum LoginType {
+    QQ_LOGIN(0,"qq"),
+    WECHAT_LOGIN(1,"wx"),
+    STUDENT_ID_LOGIN(2,"sid"),
+    PHONE_LOGIN(3,"phone");
     private final int code;
     private final String value;
 
-    LoginMethod(int code, String value) {
+    LoginType(int code, String value) {
         this.code = code;
         this.value = value;
     }
