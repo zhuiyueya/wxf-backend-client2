@@ -1,5 +1,6 @@
 package top.xcyyds.wxfbackendclient.module.auth.pojo.dto;
 
+import top.xcyyds.wxfbackendclient.module.auth.pojo.denotation.LoginTypeBinding;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 /**
@@ -9,7 +10,7 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
  * @Version:
  */
 
-
+@LoginTypeBinding(LoginType.WECHAT_LOGIN)//绑定登录枚举
 @lombok.Data
 public class WechatLoginRequest extends LoginRequest {
     /**

@@ -1,5 +1,6 @@
 package top.xcyyds.wxfbackendclient.module.auth.pojo.dto;
 
+import top.xcyyds.wxfbackendclient.module.auth.pojo.denotation.LoginTypeBinding;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 /**
@@ -9,6 +10,7 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
  * @Version:
  */
 
+@LoginTypeBinding(LoginType.PHONE_LOGIN)
 @lombok.Data
 public class PhoneLoginRequest extends LoginRequest{
     /**
