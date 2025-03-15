@@ -9,6 +9,7 @@ import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginResponse;
 import top.xcyyds.wxfbackendclient.module.auth.service.impl.AuthService;
 import top.xcyyds.wxfbackendclient.module.user.pojo.entity.User;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
+import top.xcyyds.wxfbackendclient.util.JwtUtil;
 
 /**
  * @Author: chasemoon
@@ -20,7 +21,8 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 @Component
 @Slf4j
 public abstract class AbstractLoginStrategy implements LoginStrategy {
-
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
@@ -40,7 +42,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     public String generateToken(String subject) {
 
-        return subject;
+        return jwtUtil.generateToken(subject);
     }
 
     @Override
