@@ -2,6 +2,9 @@ package top.xcyyds.wxfbackendclient.module.auth.pojo.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 /**
@@ -24,6 +27,7 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
  * - include=EXISTING_PROPERTY: 类型信息存储在已有的属性中
  * @Version:v1
  */
+
 @JsonTypeInfo(
         use=JsonTypeInfo.Id.NAME,
         include=JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -35,12 +39,15 @@ public abstract class LoginRequest {
      * 登录类型字段
      * 用于在JSON序列化和反序列化时标识具体的登录请求类型
      */
-    LoginType loginType;
+    @NotNull(message = "登录类型不能为空")
+    public LoginType loginType;
 
-    /**
-     * 获取登录类型
-     * 子类必须实现此方法以提供具体的登录类型
-     * @return 当前登录请求的类型
-     */
-    public abstract LoginType getLoginType();
+    // 添加 Getter 和 Setter
+    public LoginType getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(LoginType loginType) {
+        this.loginType = loginType;
+    }
 }

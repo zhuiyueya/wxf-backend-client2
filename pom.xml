@@ -72,6 +72,11 @@
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <!--子类参数验证注解@Valid-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!-- jpa -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

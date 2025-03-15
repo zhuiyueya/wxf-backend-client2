@@ -1,5 +1,8 @@
 package top.xcyyds.wxfbackendclient.module.auth.pojo.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.denotation.LoginTypeBinding;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
@@ -11,16 +14,25 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
  */
 
 @LoginTypeBinding(LoginType.WECHAT_LOGIN)//绑定登录枚举
-@lombok.Data
+@Data
 public class WechatLoginRequest extends LoginRequest {
     /**
      * wx.login获取的临时code
      */
+    @Valid
+    @NotBlank
     private String code;
 
-    @Override
-    public LoginType getLoginType() {
-        return null;
+    public WechatLoginRequest() {
+        this.loginType = LoginType.WECHAT_LOGIN;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
 
