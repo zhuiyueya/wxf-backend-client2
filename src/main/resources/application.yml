@@ -1,0 +1,5 @@
+# application.yml
+# 方法1：主配置中硬编码指定（适合本地开发）
+spring:
+  profiles:
+    active: dev #在生产时切换为pro
