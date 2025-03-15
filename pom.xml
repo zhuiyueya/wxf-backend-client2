@@ -72,6 +72,12 @@
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
         </dependency>
+        <!-- 引入微信 SDK -->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>4.5.0</version>
+        </dependency>
         <!-- 雪花算法javax.annotation.PostConstruct引入使用 -->
         <dependency>
             <groupId>javax.annotation</groupId>
