@@ -8,4 +8,5 @@ package top.xcyyds.wxfbackendclient.module.user.persistence.repository;
  */
 
 public class UserRepository {
+public interface UserRepository extends JpaRepository<User,Long> {
 }
