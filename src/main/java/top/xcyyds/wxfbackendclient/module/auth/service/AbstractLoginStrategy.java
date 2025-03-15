@@ -27,14 +27,11 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
         log.info("top/xcyyds/wxfbackendclient/module/auth/service/AbstractLoginStrategy:login start>>>{}",loginRequest);
-        User user=authenticate(loginRequest);
+        AuthenticationResult authenticationResult=authenticate(loginRequest);
+
         LoginResponse response=new LoginResponse();
-        response.setIsNewUser(false);
-        if(user==null){
-            //register 待定，应该在子strategy类里处理，才能根据不同的登录方式处理
-            response.setIsNewUser(true);
-        }
-        response.setToken(generateToken(user.getPublicId()));
+        response.setIsNewUser(authenticationResult.getIsNewUser());
+        response.setToken(generateToken(authenticationResult.getUser().getPublicId()));
 
         return response;
     }

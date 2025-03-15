@@ -48,16 +48,20 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
         //to do 从redis中查找appId对应的InternalId，加速查找
 
         User user;
+        AuthenticationResult authenticationResult=new AuthenticationResult();
 
         UserAuth userAuth=userAuthRepository.findByAuthKey(openId);
         //触发注册逻辑
         if(userAuth==null){
             user=createUserWithOpenId(openId,wechatLoginRequest.getLoginType());
+            authenticationResult.setIsNewUser(true);
         }else{
             user=userRepository.findByInternalId(userAuth.getUserInternalId());
+            authenticationResult.setIsNewUser(false);
         }
 
-        return user;
+        authenticationResult.setUser(user);
+        return authenticationResult;
     }
 
     private String getWechatOpenId(String code){
