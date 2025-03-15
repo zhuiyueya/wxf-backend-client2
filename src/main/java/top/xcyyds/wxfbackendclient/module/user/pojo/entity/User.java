@@ -25,7 +25,7 @@ public class User {
     /**
      * 访客ID（设备唯一）
      */
-    private String guestid;
+    private String guestId;
     /**
      * 用户唯一对内ID（雪花算法）
      */
@@ -33,11 +33,11 @@ public class User {
     /**
      * 昵称
      */
-    private String nickname;
+    private String nickName;
     /**
      * 用户唯一对外ID（HMAC-SHA256加密）
      */
-    private String publicid;
+    private String publicId;
     /**
      * 姓名（加密存储）
      */

@@ -17,7 +17,7 @@ public class UserAuth {
     /**
      * 登录方式类型
      */
-    private LoginType authMethod;
+    private LoginType authType;
     /**
      * 唯一标识（如openid/加密手机号）
      */
