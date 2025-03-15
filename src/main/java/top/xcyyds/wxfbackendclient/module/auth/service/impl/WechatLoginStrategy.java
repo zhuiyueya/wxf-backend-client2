@@ -9,8 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginRequest;
 import top.xcyyds.wxfbackendclient.module.auth.service.AbstractLoginStrategy;
+import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserAuthRepository;
+import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
 import top.xcyyds.wxfbackendclient.module.user.pojo.entity.User;
+import top.xcyyds.wxfbackendclient.module.user.pojo.entity.UserAuth;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
+import top.xcyyds.wxfbackendclient.util.IdGenerator;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 /**
  * @Author: chasemoon
@@ -23,7 +31,14 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 public class WechatLoginStrategy extends AbstractLoginStrategy {
 
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private WxMaService wxMaService;
+    @Autowired
+    private UserAuthRepository userAuthRepository;
+    @Autowired
+    private IdGenerator idGenerator;
+
     @Override
     public User authenticate(LoginRequest loginRequest) {
         return null;
@@ -37,6 +52,28 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
             throw new RuntimeException("微信登录失败:"+e.getMessage());
         }
 
+    }
+
+    private User createUserWithOpenId(String openId,LoginType loginType){
+        User user=new User();
+        UserAuth userAuth=new UserAuth();
+
+        //指定为东八区时间（偏移量“+08：00"）
+        OffsetDateTime beijingTime = OffsetDateTime.now(ZoneOffset.ofHours(8));
+        Long internalId=idGenerator.generateInternalId();
+
+        user.setInternalId(internalId);
+        user.setPublicId(idGenerator.generatePublicId(internalId));
+        user.setCreatedAt(beijingTime);
+        user.setUpdatedAt(beijingTime);
+        user=userRepository.save(user);
+
+        userAuth.setUserInternalId(user.getInternalId());
+        userAuth.setAuthType(loginType);
+        userAuth.setAuthKey(openId);
+        userAuthRepository.save(userAuth);
+
+        return user;
     }
 
     @Override
