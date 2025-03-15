@@ -1,5 +1,7 @@
 package top.xcyyds.wxfbackendclient.module.auth.controller;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import top.xcyyds.wxfbackendclient.module.auth.service.impl.AuthService;
  * @Version:
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -33,8 +36,9 @@ public class AuthController {
      * @date:  2025/3/12 08:49
      */
     @PostMapping("/login")
-    public Result<LoginResponse> wechatLogin(@RequestBody LoginRequest request) {
-        return null;
+    public Result<LoginResponse> wechatLogin(@Valid @RequestBody LoginRequest request) {
+        log.debug("wechatLogin request:{}", request);
+        return Result.success(authService.login(request));
     }
 
 
