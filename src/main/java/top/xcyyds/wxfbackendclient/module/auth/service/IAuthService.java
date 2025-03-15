@@ -1,8 +1,10 @@
 package top.xcyyds.wxfbackendclient.module.auth.service;
 
+import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginRequest;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginResponse;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.PhoneLoginRequest;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.WechatLoginRequest;
+import top.xcyyds.wxfbackendclient.module.user.pojo.entity.User;
 
 /**
  * @Author: chasemoon
@@ -12,6 +14,6 @@ import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.WechatLoginRequest;
  */
 
 public interface IAuthService {
-    LoginResponse wechatLogin(WechatLoginRequest request);
-    LoginResponse phoneLogin(PhoneLoginRequest request);
+    LoginResponse login(LoginRequest request);
+
 }

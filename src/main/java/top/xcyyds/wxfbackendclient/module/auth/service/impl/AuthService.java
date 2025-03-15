@@ -23,21 +23,11 @@ public class AuthService implements IAuthService {
      * @Author:  chasemoon
      * @date:  2025/3/12 08:53
      */
-
     @Override
     public LoginResponse wechatLogin(WechatLoginRequest request) {
         return null;
+    public LoginResponse login(LoginRequest request) {
     }
 
-    /*
-     * @Description: 手机号登录的Service,处理登录请求
-     * @param PhoneLoginRequest
-     * @return: LoginResponse
-     * @Author:  chasemoon
-     * @date:  2025/3/12 08:53
-     */
-    @Override
-    public LoginResponse phoneLogin(PhoneLoginRequest request) {
-        return null;
-    }
+
 }
