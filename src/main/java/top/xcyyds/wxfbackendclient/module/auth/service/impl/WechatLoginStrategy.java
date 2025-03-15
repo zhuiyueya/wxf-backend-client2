@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.LoginRequest;
+import top.xcyyds.wxfbackendclient.module.auth.pojo.dto.WechatLoginRequest;
 import top.xcyyds.wxfbackendclient.module.auth.service.AbstractLoginStrategy;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserAuthRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
@@ -41,7 +42,22 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
 
     @Override
     public User authenticate(LoginRequest loginRequest) {
-        return null;
+        WechatLoginRequest wechatLoginRequest=(WechatLoginRequest)loginRequest;
+        String openId=getWechatOpenId(wechatLoginRequest.getCode());
+
+        //to do 从redis中查找appId对应的InternalId，加速查找
+
+        User user;
+
+        UserAuth userAuth=userAuthRepository.findByAuthKey(openId);
+        //触发注册逻辑
+        if(userAuth==null){
+            user=createUserWithOpenId(openId,wechatLoginRequest.getLoginType());
+        }else{
+            user=userRepository.findByInternalId(userAuth.getUserInternalId());
+        }
+
+        return user;
     }
 
     private String getWechatOpenId(String code){
