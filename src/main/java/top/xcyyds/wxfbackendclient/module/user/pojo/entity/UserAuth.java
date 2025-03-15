@@ -1,8 +1,6 @@
 package top.xcyyds.wxfbackendclient.module.user.pojo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
@@ -17,6 +15,7 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 @Table(name="user_auth")
 public class UserAuth {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     /**
      * 关联的用户ID
