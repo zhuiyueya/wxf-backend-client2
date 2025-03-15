@@ -14,7 +14,7 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 public class QQLoginStrategy extends AbstractLoginStrategy {
     @Override
-    public User authenticate(LoginRequest loginRequest) {
+    public AuthenticationResult authenticate(LoginRequest loginRequest) {
         return null;
     }
 

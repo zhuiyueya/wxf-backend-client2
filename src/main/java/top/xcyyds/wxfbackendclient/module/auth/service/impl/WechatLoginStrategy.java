@@ -41,7 +41,7 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
     private IdGenerator idGenerator;
 
     @Override
-    public User authenticate(LoginRequest loginRequest) {
+    public AuthenticationResult authenticate(LoginRequest loginRequest) {
         WechatLoginRequest wechatLoginRequest=(WechatLoginRequest)loginRequest;
         String openId=getWechatOpenId(wechatLoginRequest.getCode());
 

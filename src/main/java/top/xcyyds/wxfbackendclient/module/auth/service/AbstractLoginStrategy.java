@@ -38,7 +38,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
         return response;
     }
-    public abstract User authenticate(LoginRequest loginRequest);
+    public abstract AuthenticationResult authenticate(LoginRequest loginRequest);
 
     public String generateToken(String subject) {
 
@@ -47,4 +47,30 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     @Override
     public abstract boolean canSupportedLoginType(LoginType loginType) ;
+
+    //用于AbstractLoginStrategy和子类之间交互传输
+    protected static class AuthenticationResult {
+        private User user;
+        private boolean isNewUser;
+
+       public AuthenticationResult(){
+
+       }
+
+        public User getUser() {
+            return user;
+        }
+
+        public boolean getIsNewUser() {
+            return isNewUser;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        public void setIsNewUser(boolean newUser) {
+            isNewUser = newUser;
+        }
+    }
 }
