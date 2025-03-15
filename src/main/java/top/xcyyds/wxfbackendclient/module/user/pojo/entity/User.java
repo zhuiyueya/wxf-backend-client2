@@ -1,5 +1,9 @@
 package top.xcyyds.wxfbackendclient.module.user.pojo.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.time.OffsetDateTime;
 
 /**
@@ -8,7 +12,9 @@ import java.time.OffsetDateTime;
  * @Description:
  * @Version:
  */
+@Table(name="user")
 @lombok.Data
+@Entity
 public class User {
     /**
      * 头像URL
@@ -29,7 +35,8 @@ public class User {
     /**
      * 用户唯一对内ID（雪花算法）
      */
-    private long internalid;
+    @Id
+    private long internalId;
     /**
      * 昵称
      */

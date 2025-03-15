@@ -1,5 +1,9 @@
 package top.xcyyds.wxfbackendclient.module.user.pojo.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
 import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
 
 /**
@@ -8,8 +12,12 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.enums.LoginType;
  * @Description:
  * @Version:
  */
-
+@Data
+@Entity
+@Table(name="user_auth")
 public class UserAuth {
+    @Id
+    private long id;
     /**
      * 关联的用户ID
      */
