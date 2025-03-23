@@ -3,6 +3,7 @@ package top.xcyyds.wxfbackendclient.module.auth.service.impl;
 import ch.qos.logback.core.joran.spi.HttpUtil;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import top.xcyyds.wxfbackendclient.util.IdGenerator;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 
 /**
  * @Author: chasemoon
@@ -27,7 +29,7 @@ import java.time.ZoneOffset;
  * @Description:
  * @Version:
  */
-
+@Slf4j
 @Component
 public class WechatLoginStrategy extends AbstractLoginStrategy {
 
@@ -51,6 +53,7 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
         AuthenticationResult authenticationResult=new AuthenticationResult();
 
         UserAuth userAuth=userAuthRepository.findByAuthKey(openId);
+
         //触发注册逻辑
         if(userAuth==null){
             user=createUserWithOpenId(openId,wechatLoginRequest.getLoginType());
@@ -78,7 +81,7 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
     private User createUserWithOpenId(String openId,LoginType loginType){
         User user=new User();
         UserAuth userAuth=new UserAuth();
-
+        log.info("创建用户开始");
         //指定为东八区时间（偏移量“+08：00"）
         OffsetDateTime beijingTime = OffsetDateTime.now(ZoneOffset.ofHours(8));
         Long internalId=idGenerator.generateInternalId();
@@ -90,8 +93,9 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
         user.setLevel(0);
         user.setMoney(0);
         user.setRole(0);
-        user.getUserAuths().add(userAuth);
 
+        user.setUserAuths(new ArrayList<>());
+        user.getUserAuths().add(userAuth);
 
         userAuth.setAuthType(loginType);
         userAuth.setAuthKey(openId);
