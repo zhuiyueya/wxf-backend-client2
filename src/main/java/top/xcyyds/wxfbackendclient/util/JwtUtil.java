@@ -50,5 +50,22 @@ public class JwtUtil {
                 .compact();// 将整个 JWT 编码为紧凑形式的字符串并返回。
     }
 
+    public  String validateToken(String token) {
+        try{
+
+            Claims claims=Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            //返回public_id
+            return claims.getSubject();
+        }catch (ExpiredJwtException | UnsupportedJwtException
+                | MalformedJwtException | SignatureException | IllegalArgumentException e){
+            throw new RuntimeException("Invalid token"+e.getMessage());
+        }
+    }
+
 }
 

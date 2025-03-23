@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import top.xcyyds.wxfbackendclient.util.JwtAuthenticationFilter;
 
 import java.util.Arrays;
 
@@ -28,7 +29,8 @@ import java.util.Arrays;
 
 public class SecurityConfig {
 
-
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /*
      * @Description:
@@ -45,7 +47,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/login").permitAll()//对外公开的接口
                         .anyRequest().authenticated()//其他接口需要验证
-                );
+
+                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)//在用户名密码过滤器之前先执行token过滤器
+        ;
 
 
         return http.build();
