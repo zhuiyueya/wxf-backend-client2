@@ -19,7 +19,7 @@ public class UserSchoolEnrollInfo {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long schoolEnrollInfoId;
     /**
      * 学号（AES-256加密存储）
      */
@@ -37,6 +37,6 @@ public class UserSchoolEnrollInfo {
      */
     @ManyToOne
     @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
-    @JoinColumn(name = "id")  // 显式指定外键列名
+    @JoinColumn(name = "clazz_id")  // 显式指定外键列名
     private Clazz clazz;
 }

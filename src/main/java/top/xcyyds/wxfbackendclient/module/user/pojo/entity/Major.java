@@ -23,7 +23,7 @@ public class Major {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long majorId;
     /**
      * 专业名称
      */
@@ -33,7 +33,7 @@ public class Major {
      *绑定院系
      */
     @ManyToOne
-    @JoinColumn(name = "id")  // 显式指定外键列名
+    @JoinColumn(name = "department_id")  // 显式指定外键列名
     @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
     private Department department;  // 关联的 Department 实体
     /**

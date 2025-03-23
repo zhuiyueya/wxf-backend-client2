@@ -22,7 +22,7 @@ public class Clazz {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int clazzId;
     /**
      *班级名称
      */
@@ -31,13 +31,13 @@ public class Clazz {
      *关联的专业
      */
     @ManyToOne
-    @JoinColumn(name="id")
+    @JoinColumn(name="major_id")
     @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
     private Major major;
     /**
      *关联的学生学籍信息
      */
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clazz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
     private List<UserSchoolEnrollInfo> userSchoolEnrollInfos;
 }

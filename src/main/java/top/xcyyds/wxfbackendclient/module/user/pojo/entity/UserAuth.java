@@ -20,7 +20,7 @@ public class UserAuth {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long authId;
 
     /**
      * 登录方式类型

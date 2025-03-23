@@ -22,7 +22,7 @@ public class Department {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long departmentId;
     /**
      * 院系名称
      */
