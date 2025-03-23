@@ -1,11 +1,14 @@
 package top.xcyyds.wxfbackendclient.module.user.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.xcyyds.wxfbackendclient.common.Result;
+import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoRequest;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoResponse;
+import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
 
 /**
  * @Author: chasemoon
@@ -24,9 +27,13 @@ public class UserController {
      * @Author:  chasemoon
      * @date:  2025/3/22 15:48
      */
-
+    @Autowired
+    private UserService userService;
     @GetMapping("/me")
     public Result<GetUserSelfInfoResponse>getUserSelfInfo(Authentication authentication){
-        return null;
+        GetUserSelfInfoRequest request=new GetUserSelfInfoRequest();
+        request.setPublicId(authentication.getPrincipal().toString());
+        return Result.success(userService.getUserSelfInfo(request));
+
     }
 }
