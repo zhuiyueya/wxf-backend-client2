@@ -9,37 +9,35 @@ import java.util.List;
 
 /**
  * @Author: chasemoon
- * @CreateTime: 2025-03-09
+ * @CreateTime: 2025-03-23
  * @Description:
  * @Version:
  */
 @Data
 @Entity
 @Table
-public class Major {
-
+public class Clazz {
     /**
-     * 专业唯一ID
+     *班级唯一id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     /**
-     * 专业名称
+     *班级名称
      */
     private String name;
-
     /**
-     *绑定院系
+     *关联的专业
      */
     @ManyToOne
-    @JoinColumn(name = "id")  // 显式指定外键列名
+    @JoinColumn(name="id")
     @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
-    private Department department;  // 关联的 Department 实体
+    private Major major;
     /**
-     *绑定的班级
+     *关联的学生学籍信息
      */
-    @OneToMany(mappedBy = "major")
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
-    private List<Clazz> clazzes;
+    private List<UserSchoolEnrollInfo> userSchoolEnrollInfos;
 }

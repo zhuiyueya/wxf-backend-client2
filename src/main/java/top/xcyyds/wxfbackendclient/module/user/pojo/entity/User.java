@@ -1,10 +1,10 @@
 package top.xcyyds.wxfbackendclient.module.user.pojo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 /**
  * @Author: chasemoon
@@ -57,4 +57,28 @@ public class User {
      * 更新时间
      */
     private OffsetDateTime updatedAt;
+    /**
+     * 用户等级
+     */
+    private long level;
+    /**
+     * 武纺币
+     */
+    private long money;
+    /**
+     * 帖子数量
+     */
+    private long postCount;
+    /**
+     *关联学籍表
+     */
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
+    private UserSchoolEnrollInfo enrollInfo;  // 一对一关联
+    /**
+     *关联的用户认证信息
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
+    private List<UserAuth> userAuths;
 }
