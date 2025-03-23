@@ -55,8 +55,9 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
         if(userAuth==null){
             user=createUserWithOpenId(openId,wechatLoginRequest.getLoginType());
             authenticationResult.setIsNewUser(true);
-        }else{
-            user=userRepository.findByInternalId(userAuth.getUserInternalId());
+        }else{//登录逻辑
+            //user=userRepository.findByInternalId(userAuth.getUser().getInternalId());
+            user=userAuth.getUser();
             authenticationResult.setIsNewUser(false);
         }
 
@@ -86,12 +87,17 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
         user.setPublicId(idGenerator.generatePublicId(internalId));
         user.setCreatedAt(beijingTime);
         user.setUpdatedAt(beijingTime);
-        user=userRepository.save(user);
+        user.setLevel(0);
+        user.setMoney(0);
+        user.setRole(0);
+        user.getUserAuths().add(userAuth);
 
-        userAuth.setUserInternalId(user.getInternalId());
+
         userAuth.setAuthType(loginType);
         userAuth.setAuthKey(openId);
-        userAuthRepository.save(userAuth);
+        userAuth.setUser(user);
+
+        user=userRepository.save(user);
 
         return user;
     }
