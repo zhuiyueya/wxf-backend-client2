@@ -1,14 +1,16 @@
 package top.xcyyds.wxfbackendclient.module.user.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserSchoolEnrollInfoRepository;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoRequest;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoResponse;
-import top.xcyyds.wxfbackendclient.module.user.pojo.entity.User;
-import top.xcyyds.wxfbackendclient.module.user.pojo.entity.UserSchoolEnrollInfo;
+import top.xcyyds.wxfbackendclient.module.user.pojo.entity.*;
 import top.xcyyds.wxfbackendclient.module.user.service.IUserService;
+
+import java.util.Optional;
 
 /**
  * @Author: chasemoon
@@ -17,6 +19,7 @@ import top.xcyyds.wxfbackendclient.module.user.service.IUserService;
  * @Version:v1
  */
 
+@Slf4j
 @Service
 public class UserService implements IUserService {
     @Autowired
@@ -39,8 +42,30 @@ public class UserService implements IUserService {
         response.setNickName(user.getNickName());
         response.setPostCount(user.getPostCount());
 
-        response.setMajorName(user.getEnrollInfo().getClazz().getMajor().getName());
-        response.setDepartmentName(user.getEnrollInfo().getClazz().getMajor().getDepartment().getName());
+        // 设置 MajorName
+        Optional.ofNullable(user)
+                .map(User::getEnrollInfo)
+                .map(UserSchoolEnrollInfo::getClazz)
+                .map(Clazz::getMajor)
+                .map(Major::getName)
+                .ifPresentOrElse(
+                        name -> response.setMajorName(name),
+                        () -> response.setMajorName("")  // 默认值或空字符串
+                );
+
+        // 设置 DepartmentName
+        Optional.ofNullable(user)
+                .map(User::getEnrollInfo)
+                .map(UserSchoolEnrollInfo::getClazz)
+                .map(Clazz::getMajor)
+                .map(Major::getDepartment)
+                .map(Department::getName)
+                .ifPresentOrElse(
+                        name -> response.setDepartmentName(name),
+                        () -> response.setDepartmentName("")
+                );
+//        response.setMajorName(user.getEnrollInfo().getClazz().getMajor().getName());
+//        response.setDepartmentName(user.getEnrollInfo().getClazz().getMajor().getDepartment().getName());
 
         return response;
     }
