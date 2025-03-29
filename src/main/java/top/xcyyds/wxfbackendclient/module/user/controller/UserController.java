@@ -38,4 +38,11 @@ public class UserController {
         updateUserSelfNickNameRequest.setPublicId(authentication.getPrincipal().toString());
         return Result.success(userService.updateUserSelfNickName(updateUserSelfNickNameRequest));
     }
+    @PatchMapping("/major")
+    public Result<GetUserSelfInfoResponse>updateUserSelfMajor(Authentication authentication, @RequestBody int majorId) {
+        UpdateUserSelfMajorRequest updateUserSelfMajorRequest=new UpdateUserSelfMajorRequest();
+        updateUserSelfMajorRequest.setPublicId(authentication.getPrincipal().toString());
+        updateUserSelfMajorRequest.setMajorId(majorId);
+        return Result.success(userService.updateUserSelfMajor(updateUserSelfMajorRequest));
+    }
 }

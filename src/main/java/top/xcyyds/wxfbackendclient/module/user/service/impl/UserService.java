@@ -27,6 +27,10 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
     @Autowired
     private UserSchoolEnrollInfoRepository userSchoolEnrollInfoRepository;
+    @Autowired
+    private MajorRepository majorRepository;
+
+
     @Override
     public GetUserSelfInfoResponse getUserSelfInfo(GetUserSelfInfoRequest request) {
         // to do...
@@ -45,6 +49,27 @@ public class UserService implements IUserService {
         user.setNickName(updateUserSelfNickNameRequest.getNickName());
         return convertToGetUserSelfInfoResponse(userRepository.save(user));
         //return userRepository.updateUserNickName(updateUserSelfNickNameRequest.getPublicId(), updateUserSelfNickNameRequest.getNickName());
+    }
+
+    @Override
+    public GetUserSelfInfoResponse updateUserSelfMajor(UpdateUserSelfMajorRequest updateUserSelfMajorRequest) {
+        User user=userRepository.findByPublicId(updateUserSelfMajorRequest.getPublicId());
+
+        //若该用户未设置过学籍相关信息，则先创建
+        if (user.getEnrollInfo()==null){
+            user.setEnrollInfo(new UserSchoolEnrollInfo());
+        }
+        //若该用户未设置过班级等相关信息，则先创建
+        if(user.getEnrollInfo().getClazz()==null){
+            user.getEnrollInfo().setClazz(new Clazz());
+        }
+        //若该用户未设置过专业相关信息，则先创建
+        if(user.getEnrollInfo().getClazz().getMajor()==null){
+            user.getEnrollInfo().getClazz().setMajor(new Major());
+        }
+        Major major=majorRepository.findByMajorId(updateUserSelfMajorRequest.getMajorId());
+        user.getEnrollInfo().getClazz().setMajor(major);
+        return convertToGetUserSelfInfoResponse(userRepository.save(user));
     }
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();
@@ -80,9 +105,6 @@ public class UserService implements IUserService {
                         name -> response.setDepartmentName(name),
                         () -> response.setDepartmentName("")
                 );
-//        response.setMajorName(user.getEnrollInfo().getClazz().getMajor().getName());
-//        response.setDepartmentName(user.getEnrollInfo().getClazz().getMajor().getDepartment().getName());
-
         return response;
     }
 }

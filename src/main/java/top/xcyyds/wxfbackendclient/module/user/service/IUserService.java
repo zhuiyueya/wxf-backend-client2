@@ -13,4 +13,6 @@ public interface IUserService {
     GetUserSelfInfoResponse getUserSelfInfo(GetUserSelfInfoRequest request);
 
     GetUserSelfInfoResponse updateUserSelfNickName(UpdateUserSelfNickNameRequest updateUserSelfNickNameRequest);
+
+    GetUserSelfInfoResponse updateUserSelfMajor(UpdateUserSelfMajorRequest updateUserSelfMajorRequest);
 }
