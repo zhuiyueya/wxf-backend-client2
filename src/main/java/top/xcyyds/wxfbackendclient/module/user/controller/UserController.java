@@ -2,12 +2,9 @@ package top.xcyyds.wxfbackendclient.module.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.xcyyds.wxfbackendclient.common.Result;
-import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoRequest;
-import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoResponse;
+import top.xcyyds.wxfbackendclient.module.user.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
 
 /**
@@ -35,5 +32,10 @@ public class UserController {
         request.setPublicId(authentication.getPrincipal().toString());
         return Result.success(userService.getUserSelfInfo(request));
 
+    }
+    @PatchMapping("/nickName")
+    public Result<GetUserSelfInfoResponse>updateUserSelfNickName(Authentication authentication, @RequestBody UpdateUserSelfNickNameRequest updateUserSelfNickNameRequest) {
+        updateUserSelfNickNameRequest.setPublicId(authentication.getPrincipal().toString());
+        return Result.success(userService.updateUserSelfNickName(updateUserSelfNickNameRequest));
     }
 }

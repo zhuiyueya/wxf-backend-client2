@@ -3,10 +3,11 @@ package top.xcyyds.wxfbackendclient.module.user.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.xcyyds.wxfbackendclient.module.user.persistence.repository.DepartmentRepository;
+import top.xcyyds.wxfbackendclient.module.user.persistence.repository.MajorRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserSchoolEnrollInfoRepository;
-import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoRequest;
-import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoResponse;
+import top.xcyyds.wxfbackendclient.module.user.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.user.pojo.entity.*;
 import top.xcyyds.wxfbackendclient.module.user.service.IUserService;
 
@@ -36,6 +37,14 @@ public class UserService implements IUserService {
 //        response.setDepartmentName(user.getEnrollInfo().getClazz().getMajor().getDepartment().getName());
 
         return convertToGetUserSelfInfoResponse(user);
+    }
+
+    @Override
+    public GetUserSelfInfoResponse updateUserSelfNickName(UpdateUserSelfNickNameRequest updateUserSelfNickNameRequest) {
+        User user=userRepository.findByPublicId(updateUserSelfNickNameRequest.getPublicId());
+        user.setNickName(updateUserSelfNickNameRequest.getNickName());
+        return convertToGetUserSelfInfoResponse(userRepository.save(user));
+        //return userRepository.updateUserNickName(updateUserSelfNickNameRequest.getPublicId(), updateUserSelfNickNameRequest.getNickName());
     }
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();

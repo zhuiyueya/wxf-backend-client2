@@ -1,7 +1,6 @@
 package top.xcyyds.wxfbackendclient.module.user.service;
 
-import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoRequest;
-import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoResponse;
+import top.xcyyds.wxfbackendclient.module.user.pojo.dto.*;
 
 /**
  * @Author: chasemoon
@@ -12,4 +11,6 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserSelfInfoResponse;
 
 public interface IUserService {
     GetUserSelfInfoResponse getUserSelfInfo(GetUserSelfInfoRequest request);
+
+    GetUserSelfInfoResponse updateUserSelfNickName(UpdateUserSelfNickNameRequest updateUserSelfNickNameRequest);
 }
