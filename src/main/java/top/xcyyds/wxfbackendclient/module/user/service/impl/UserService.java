@@ -31,6 +31,13 @@ public class UserService implements IUserService {
         // to do...
         //通过publicId和internalId的映射表，快速获取internalId，并使用internalId进行查询，加快处理速度
         User user=userRepository.findByPublicId(request.getPublicId());
+
+//        response.setMajorName(user.getEnrollInfo().getClazz().getMajor().getName());
+//        response.setDepartmentName(user.getEnrollInfo().getClazz().getMajor().getDepartment().getName());
+
+        return convertToGetUserSelfInfoResponse(user);
+    }
+    private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();
 
         //设置返回信息
