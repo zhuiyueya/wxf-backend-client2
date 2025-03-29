@@ -8,6 +8,7 @@ package top.xcyyds.wxfbackendclient.module.post.pojo.dto;
  */
 
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
+import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.SummaryAuthorInfo;
 
 import java.time.OffsetDateTime;
@@ -70,4 +71,8 @@ public class SummaryPost {
      * 浏览量
      */
     private double viewCount;
+    /**
+     * 帖子类型
+     */
+    private PostType postType;
 }

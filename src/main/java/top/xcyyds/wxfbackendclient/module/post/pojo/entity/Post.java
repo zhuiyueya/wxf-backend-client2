@@ -6,6 +6,8 @@ package top.xcyyds.wxfbackendclient.module.post.pojo.entity;
  * @Description:
  * @Version:
  */
+import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
+
 import java.time.OffsetDateTime;
 
 @lombok.Data
@@ -58,4 +60,8 @@ public class Post {
      * 浏览次数统计（0-10万随机）
      */
     private Long viewCount;
+    /**
+     * 帖子类型
+     */
+    private PostType postType;
 }
