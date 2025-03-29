@@ -28,6 +28,8 @@ public class UserService implements IUserService {
     @Autowired
     private UserSchoolEnrollInfoRepository userSchoolEnrollInfoRepository;
     @Autowired
+    private DepartmentRepository departmentRepository;
+    @Autowired
     private MajorRepository majorRepository;
 
 
@@ -71,6 +73,33 @@ public class UserService implements IUserService {
         user.getEnrollInfo().getClazz().setMajor(major);
         return convertToGetUserSelfInfoResponse(userRepository.save(user));
     }
+
+    @Override
+    public GetUserSelfInfoResponse updateUserDepartment(UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest) {
+        User user=userRepository.findByPublicId(updateUserSelfDepartmentRequest.getPublicId());
+        //若该用户未设置过学籍相关信息，则先创建
+        if (user.getEnrollInfo()==null){
+            user.setEnrollInfo(new UserSchoolEnrollInfo());
+        }
+        //若该用户未设置过班级等相关信息，则先创建
+        if(user.getEnrollInfo().getClazz()==null){
+            user.getEnrollInfo().setClazz(new Clazz());
+        }
+        //若该用户未设置过专业相关信息，则先创建
+        if(user.getEnrollInfo().getClazz().getMajor()==null){
+            user.getEnrollInfo().getClazz().setMajor(new Major());
+        }
+        if(user.getEnrollInfo().getClazz().getMajor().getDepartment()==null){
+            user.getEnrollInfo().getClazz().getMajor().setDepartment(new Department());
+        }
+
+        Department department=departmentRepository.findByDepartmentId(updateUserSelfDepartmentRequest.getDepartmentId());
+
+
+        user.getEnrollInfo().getClazz().getMajor().setDepartment(department);
+        return convertToGetUserSelfInfoResponse(userRepository.save(user));
+    }
+
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();
 

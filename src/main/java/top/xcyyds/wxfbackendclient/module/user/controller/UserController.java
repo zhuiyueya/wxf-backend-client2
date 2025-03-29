@@ -45,4 +45,12 @@ public class UserController {
         updateUserSelfMajorRequest.setMajorId(majorId);
         return Result.success(userService.updateUserSelfMajor(updateUserSelfMajorRequest));
     }
+    @PatchMapping("/department")
+    public Result<GetUserSelfInfoResponse>updateUserSelfDepartment(Authentication authentication, @RequestBody int departmentId) {
+        UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest=new UpdateUserSelfDepartmentRequest();
+        updateUserSelfDepartmentRequest.setPublicId(authentication.getPrincipal().toString());
+        updateUserSelfDepartmentRequest.setDepartmentId(departmentId);
+        return Result.success(userService.updateUserDepartment(updateUserSelfDepartmentRequest));
+    }
+
 }
