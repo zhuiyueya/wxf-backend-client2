@@ -53,7 +53,28 @@ public class PostService implements IPostService {
     @Override
     public ListPostsResponse listPosts(ListPostsRequest request) {
         return null;
+        //构建动态查询条件
+        Specification<Post>spec=buildSpecification(request);
+
+        //构建分页和排序
+        Pageable pageable= buildPageable(request);
+
+        //执行查询
+        Page<Post>postPage=postRepository.findAll(spec,pageable);
+
+        //构建返回信息并返回
+        return buildListPostsResponse(postPage,request);
     }
+
+    private ListPostsResponse buildListPostsResponse(Page<Post> postPage, ListPostsRequest request) {
+    }
+
+    private Pageable buildPageable(ListPostsRequest request) {
+    }
+
+    private Specification<Post> buildSpecification(ListPostsRequest request) {
+    }
+
 
     @Override
     public SummaryPost addPost(AddPostRequest request) {
