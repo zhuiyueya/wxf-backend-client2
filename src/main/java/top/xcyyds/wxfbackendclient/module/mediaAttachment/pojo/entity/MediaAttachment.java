@@ -7,18 +7,26 @@ package top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity;
  * @Version:
  */
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.ToString;
 import top.xcyyds.wxfbackendclient.module.like.pojo.entity.TargetType;
+import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 
 import java.time.OffsetDateTime;
 
 /**
  * mediaAttachment
  */
+@Table
+@Entity
 @lombok.Data
-public class mediaAttachment {
+public class MediaAttachment {
     /**
      * 附件唯一标识符（自增主键）
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attachId;
     /**
      * SHA-256文件哈希值（模拟64位Hex）
@@ -56,4 +64,9 @@ public class mediaAttachment {
      * 上传时间戳（晚于帖子创建时间）
      */
     private OffsetDateTime uploadTime;
+
+    @ManyToOne
+    @JoinColumn(name="post_id")
+    @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
+    private Post post;
 }

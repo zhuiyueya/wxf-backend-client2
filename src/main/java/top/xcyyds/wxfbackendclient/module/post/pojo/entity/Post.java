@@ -6,10 +6,16 @@ package top.xcyyds.wxfbackendclient.module.post.pojo.entity;
  * @Description:
  * @Version:
  */
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.ToString;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
 
 import java.time.OffsetDateTime;
-
+import java.util.List;
+@Table
+@Entity
 @lombok.Data
 public class Post {
     /**
@@ -35,6 +41,8 @@ public class Post {
     /**
      * 帖子唯一标识符（自增主键）
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
     /**
      * 发布者用户ID（UUID格式）
@@ -64,4 +72,10 @@ public class Post {
      * 帖子类型
      */
     private PostType postType;
+    /**
+     * 关联的媒体附件表
+     */
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
+    private List<MediaAttachment> mediaAttachments;
 }
