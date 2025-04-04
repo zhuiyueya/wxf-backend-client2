@@ -17,4 +17,6 @@ public interface IUserService {
     GetUserSelfInfoResponse updateUserSelfMajor(UpdateUserSelfMajorRequest updateUserSelfMajorRequest);
 
     GetUserSelfInfoResponse updateUserDepartment(UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest);
+
+    GetUserInfoResponse getUserInfo(GetUserInfoRequest getUserInfoRequest);
 }

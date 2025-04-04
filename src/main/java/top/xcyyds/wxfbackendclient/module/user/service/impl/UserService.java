@@ -1,6 +1,7 @@
 package top.xcyyds.wxfbackendclient.module.user.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.DepartmentRepository;
@@ -98,6 +99,14 @@ public class UserService implements IUserService {
 
         user.getEnrollInfo().getClazz().getMajor().setDepartment(department);
         return convertToGetUserSelfInfoResponse(userRepository.save(user));
+    }
+
+    @Override
+    public GetUserInfoResponse getUserInfo(GetUserInfoRequest getUserInfoRequest) {
+        User user=userRepository.findByPublicId(getUserInfoRequest.getPublicId());
+        GetUserInfoResponse getUserInfoResponse=new GetUserInfoResponse();
+        BeanUtils.copyProperties(user,getUserInfoResponse);
+        return getUserInfoResponse;
     }
 
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
