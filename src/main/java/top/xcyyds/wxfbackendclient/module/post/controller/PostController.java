@@ -24,7 +24,7 @@ public class PostController {
     @Autowired
     private PostService postService;
     @PostMapping("/list")
-    public Result<ListPostsResponse> listPosts(ListPostsRequest request) {
+    public Result<ListPostsResponse> listPosts(@RequestBody ListPostsRequest request) {
         return Result.success(postService.listPosts(request));
     }
     @GetMapping("/get/{postId}")
