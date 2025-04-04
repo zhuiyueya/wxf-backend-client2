@@ -1,11 +1,18 @@
 package top.xcyyds.wxfbackendclient.module.post.service.impl;
 
+import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.el.util.ReflectionUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.UploadMediaResponse;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
@@ -15,6 +22,8 @@ import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsRequest;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsResponse;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.SummaryPost;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
+import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
+import top.xcyyds.wxfbackendclient.module.post.pojo.enums.SortType;
 import top.xcyyds.wxfbackendclient.module.post.repository.PostRepository;
 import top.xcyyds.wxfbackendclient.module.post.service.IPostService;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
@@ -23,10 +32,13 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserInfoResponse;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.SummaryAuthorInfo;
 import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: chasemoon
@@ -52,7 +64,6 @@ public class PostService implements IPostService {
 
     @Override
     public ListPostsResponse listPosts(ListPostsRequest request) {
-        return null;
         //构建动态查询条件
         Specification<Post>spec=buildSpecification(request);
 
@@ -67,12 +78,69 @@ public class PostService implements IPostService {
     }
 
     private ListPostsResponse buildListPostsResponse(Page<Post> postPage, ListPostsRequest request) {
+        ListPostsResponse listPostsResponse=new ListPostsResponse();
+        listPostsResponse.setPageSize(postPage.getTotalElements());
+        listPostsResponse.setTotalPosts(postPage.getTotalElements());
+
+        List<SummaryPost>summaryPosts=postPage.getContent().stream()
+                .map(this::convert2SummaryPost)
+                .collect(Collectors.toList());
+        listPostsResponse.setPosts(summaryPosts);
+
+        if(!postPage.getContent().isEmpty()){
+            Post lastPost=postPage.getContent().get(postPage.getContent().size()-1);
+            listPostsResponse.setTimeCursor(lastPost.getCreateTime().toString());
+        }
+
+        return listPostsResponse;
     }
 
     private Pageable buildPageable(ListPostsRequest request) {
+        Sort sort;
+
+        switch(SortType.valueOf(request.getSortType())){
+            case TIME_DESCENDING:
+            default:
+                sort=Sort.by(Sort.Direction.DESC,"createTime");
+                break;
+        }
+
+        return PageRequest.of(0,(int)request.getPageSize(),sort);
     }
 
     private Specification<Post> buildSpecification(ListPostsRequest request) {
+        return (root,query,cb)->{
+            List<Predicate>predicates=new ArrayList<>();
+
+            //基础过滤条件-状态正常的帖子
+            predicates.add(cb.equal(root.get("status"),1L));
+
+            //帖子类型过滤
+            if(StringUtils.hasText(request.getPostType())){
+                try{
+                    PostType postType=PostType.valueOf(request.getPostType());
+                    predicates.add(cb.equal(root.get("postType"),postType));
+                }catch (IllegalArgumentException e){
+                    throw new IllegalArgumentException("不支持的帖子类型");
+                }
+            }
+
+            //时间游标处理
+            if(StringUtils.hasText(request.getTimeCursor())){
+//                // 自定义格式解析
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+//                LocalDateTime localDateTime = LocalDateTime.parse(request.getTimeCursor(), formatter);
+//
+//                // 添加时区（示例使用 UTC）
+//                OffsetDateTime cursorTime = localDateTime.atOffset(ZoneOffset.UTC);
+                OffsetDateTime cursorTime= OffsetDateTime.parse(request.getTimeCursor());
+                predicates.add(cb.lessThan(root.get("createTime"),cursorTime));
+            }else{
+                //当timeCursor为空时不需要此条件，自动获取最新的，因为有buildPageable函数的按时间排序
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
     }
 
 
