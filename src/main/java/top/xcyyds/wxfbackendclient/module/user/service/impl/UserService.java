@@ -114,7 +114,7 @@ public class UserService implements IUserService {
 
         //设置返回信息
         response.setPublicId(user.getPublicId());
-        response.setAvator(user.getAvatar());
+        response.setAvatar(user.getAvatar());
         response.setLevel(user.getLevel());
         response.setMoney(user.getMoney());
         response.setRole(user.getRole());

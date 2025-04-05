@@ -13,7 +13,7 @@ public class GetUserSelfInfoResponse {
     /**
      * 图片相对路径，图片相对路径（即不包含ip和端口，前端获取路径后用来请求图片服务器
      */
-    private String avator;
+    private String avatar;
     /**
      * 学院名称
      */

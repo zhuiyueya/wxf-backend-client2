@@ -13,7 +13,7 @@ public class GetUserInfoResponse {
     /**
      * 图片完整路径，图片完整路径（即包含ip和端口，前端获取路径后用来请求图片服务器
      */
-    private String avator;
+    private String avatar;
     /**
      * 学院名称
      */
