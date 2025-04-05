@@ -17,7 +17,7 @@ public class Result<T> {
     /*
      *成功/失败信息
      */
-    private String msg;
+    private String message;
     /*
      *返回数据
      */
@@ -25,7 +25,7 @@ public class Result<T> {
 
     public Result(int code, String msg, T data) {
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
         this.data = data;
     }
 
@@ -42,7 +42,7 @@ public class Result<T> {
     public static <T> Result<T>success(T data){
         Result<T>result =new Result<>();
         result.setCode(200);
-        result.setMsg("success");
+        result.setMessage("success");
         result.setData(data);
         return result;
     }
