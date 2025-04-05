@@ -13,6 +13,6 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.entity.Department;
 public interface DepartmentRepository extends JpaRepository<Department,Long> {
 
 
-    Department findByDepartmentId(int departmentId);
+    Department findByDepartmentId(long departmentId);
 }
 
