@@ -40,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Long.min;
+
 /**
  * @Author: chasemoon
  * @CreateTime: 2025-03-29
@@ -79,11 +81,11 @@ public class PostService implements IPostService {
 
     private ListPostsResponse buildListPostsResponse(Page<Post> postPage, ListPostsRequest request) {
         ListPostsResponse listPostsResponse=new ListPostsResponse();
-        listPostsResponse.setPageSize(postPage.getTotalElements());
+        listPostsResponse.setPageSize(min(postPage.getTotalElements(),request.getPageSize()));
         listPostsResponse.setTotalPosts(postPage.getTotalElements());
 
         List<SummaryPost>summaryPosts=postPage.getContent().stream()
-                .map(this::convert2SummaryPost)
+                .map(post->convert2SummaryPost(post,true))
                 .collect(Collectors.toList());
         listPostsResponse.setPosts(summaryPosts);
 
@@ -99,7 +101,7 @@ public class PostService implements IPostService {
         Sort sort;
 
         switch(SortType.valueOf(request.getSortType())){
-            case TIME_DESCENDING:
+            case TIME_DESCENDING: //按时间降序，即由新到旧排序帖子
             default:
                 sort=Sort.by(Sort.Direction.DESC,"createTime");
                 break;
@@ -151,7 +153,7 @@ public class PostService implements IPostService {
         post=postRepository.save(post);
 
         //log.info("帖子创建成功：{}",post);
-        return convert2SummaryPost(post);
+        return convert2SummaryPost(post, true);
     }
 
 
@@ -187,7 +189,7 @@ public class PostService implements IPostService {
 
         return post;
     }
-    public SummaryPost convert2SummaryPost(Post post){
+    public SummaryPost convert2SummaryPost(Post post,boolean isComplete){
 
         //获取作者基础信息
         GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
@@ -195,6 +197,7 @@ public class PostService implements IPostService {
         GetUserInfoResponse getUserInfoResponse=userService.getUserInfo(getUserInfoRequest);
         SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
         BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
+
 
         //获取媒体附件列表
         List<SummaryMediaAttachment> summaryMediaAttachments=new ArrayList<>();
@@ -210,6 +213,7 @@ public class PostService implements IPostService {
         SummaryPost summaryPost=new SummaryPost();
 
         //设置SummaryPost的成员
+        summaryPost.setComplete(isComplete);
         summaryPost.setPostId(post.getPostId());
         summaryPost.setContent(post.getContent());
         summaryPost.setPostType(post.getPostType());
