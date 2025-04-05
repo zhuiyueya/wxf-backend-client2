@@ -42,6 +42,7 @@ public class SummaryPost {
     /**
      * 用于获取帖子列表是判断此次获取是否获取了完整的信息，若是则在进入帖子详细页时可以不用请求
      */
+    @JsonProperty("isComplete")
     private boolean isComplete;
     /**
      * 点赞量
