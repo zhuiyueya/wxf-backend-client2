@@ -21,7 +21,7 @@ public class ListPostsResponse {
     /**
      * 当前页的帖子数量
      */
-    private double pageSize;
+    private Long pageSize;
     /**
      * 帖子列表
      */
@@ -29,6 +29,6 @@ public class ListPostsResponse {
     /**
      * 总帖子数
      */
-    private double totalPosts;
+    private Long totalPosts;
 }
 

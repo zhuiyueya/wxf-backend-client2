@@ -7,6 +7,8 @@ package top.xcyyds.wxfbackendclient.module.post.pojo.dto;
  * @Version:
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
 import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.SummaryAuthorInfo;
@@ -17,7 +19,7 @@ import java.util.List;
 /**
  * summaryPost
  */
-@lombok.Data
+@Data
 public class SummaryPost {
     /**
      * 作者信息
@@ -26,7 +28,7 @@ public class SummaryPost {
     /**
      * 收藏数量
      */
-    private double collectCount;
+    private Long collectCount;
     /**
      * 内容摘要（Markdown格式）
      */
@@ -47,19 +49,19 @@ public class SummaryPost {
     /**
      * 点赞量
      */
-    private double likeCount;
+    private Long likeCount;
     /**
      * 帖子唯一标识
      */
-    private double postId;
+    private Long postId;
     /**
      * 回复数量
      */
-    private double replyCount;
+    private Long replyCount;
     /**
      * 分享数量
      */
-    private double shareCount;
+    private Long shareCount;
     /**
      * 媒体附件部分信息列表
      */
@@ -67,11 +69,11 @@ public class SummaryPost {
     /**
      * 附件总数
      */
-    private double totalAttachments;
+    private Long totalAttachments;
     /**
      * 浏览量
      */
-    private double viewCount;
+    private Long viewCount;
     /**
      * 帖子类型
      */
