@@ -3,6 +3,7 @@ package top.xcyyds.wxfbackendclient.module.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.xcyyds.wxfbackendclient.common.Result;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
@@ -53,4 +54,11 @@ public class UserController {
         return Result.success(userService.updateUserDepartment(updateUserSelfDepartmentRequest));
     }
 
+    @PatchMapping("/avatar")
+    public Result<GetUserSelfInfoResponse>updateUserSelfAvatar(Authentication authentication, @ModelAttribute MultipartFile mediaAttachments) {
+        UpdateUserSelfAvatarRequest updateUserSelfAvatarRequest=new UpdateUserSelfAvatarRequest();
+        updateUserSelfAvatarRequest.setPublicId(authentication.getPrincipal().toString());
+        updateUserSelfAvatarRequest.setMultipartFile(mediaAttachments);
+        return Result.success(userService.updateUserAvatar(updateUserSelfAvatarRequest));
+    }
 }

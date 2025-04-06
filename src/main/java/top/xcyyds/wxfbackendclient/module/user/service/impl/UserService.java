@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.UploadMediaResponse;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.IMediaStorageService;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.DepartmentRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.MajorRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
@@ -32,7 +34,8 @@ public class UserService implements IUserService {
     private DepartmentRepository departmentRepository;
     @Autowired
     private MajorRepository majorRepository;
-
+    @Autowired
+    private IMediaStorageService mediaStorageService;
 
     @Override
     public GetUserSelfInfoResponse getUserSelfInfo(GetUserSelfInfoRequest request) {
@@ -108,6 +111,16 @@ public class UserService implements IUserService {
         BeanUtils.copyProperties(user,getUserInfoResponse);
         return getUserInfoResponse;
     }
+
+    @Override
+    //更新用户头像的url
+    public GetUserSelfInfoResponse updateUserAvatar(UpdateUserSelfAvatarRequest updateUserSelfAvatarRequest) {
+        User user=userRepository.findByPublicId(updateUserSelfAvatarRequest.getPublicId());
+        UploadMediaResponse uploadResponse = mediaStorageService.uploadMedia(updateUserSelfAvatarRequest.getMultipartFile(),"/avatar");//写死，后可修改
+        user.setAvatar(uploadResponse.getMediaPath());
+        return convertToGetUserSelfInfoResponse(userRepository.save(user));
+    }
+
 
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();
