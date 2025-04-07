@@ -39,17 +39,13 @@ public class UserController {
         return Result.success(userService.updateUserSelfNickName(updateUserSelfNickNameRequest));
     }
     @PatchMapping("/major")
-    public Result<GetUserSelfInfoResponse>updateUserSelfMajor(Authentication authentication, @RequestBody int majorId) {
-        UpdateUserSelfMajorRequest updateUserSelfMajorRequest=new UpdateUserSelfMajorRequest();
+    public Result<GetUserSelfInfoResponse>updateUserSelfMajor(Authentication authentication, @RequestBody UpdateUserSelfMajorRequest updateUserSelfMajorRequest) {
         updateUserSelfMajorRequest.setPublicId(authentication.getPrincipal().toString());
-        updateUserSelfMajorRequest.setMajorId(majorId);
         return Result.success(userService.updateUserSelfMajor(updateUserSelfMajorRequest));
     }
     @PatchMapping("/department")
-    public Result<GetUserSelfInfoResponse>updateUserSelfDepartment(Authentication authentication, @RequestBody int departmentId) {
-        UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest=new UpdateUserSelfDepartmentRequest();
+    public Result<GetUserSelfInfoResponse>updateUserSelfDepartment(Authentication authentication, @RequestBody UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest) {
         updateUserSelfDepartmentRequest.setPublicId(authentication.getPrincipal().toString());
-        updateUserSelfDepartmentRequest.setDepartmentId(departmentId);
         return Result.success(userService.updateUserDepartment(updateUserSelfDepartmentRequest));
     }
 
