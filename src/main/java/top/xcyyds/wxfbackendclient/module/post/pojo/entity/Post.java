@@ -9,6 +9,7 @@ package top.xcyyds.wxfbackendclient.module.post.pojo.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.ToString;
+import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
 
@@ -78,4 +79,10 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
     private List<MediaAttachment> mediaAttachments;
+    /**
+     * 关联的评论
+     */
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
+    private List<Comment> comments;
 }

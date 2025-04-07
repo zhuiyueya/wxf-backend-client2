@@ -7,8 +7,10 @@ package top.xcyyds.wxfbackendclient.module.comment.pojo.entity;
  * @Version:
  */
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import top.xcyyds.wxfbackendclient.common.ContentState;
+import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 
 import java.time.OffsetDateTime;
 
@@ -65,5 +67,12 @@ public class Comment {
      * 被回复的用户ID（UUID格式），用于回复评论/帖子的消息通知
      */
     private String replyToUserPublicId;
+    /**
+     * 评论的帖子
+     */
+    @ManyToOne
+    @JoinColumn(name="post_id")
+    @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
+    private Post post;
 }
 
