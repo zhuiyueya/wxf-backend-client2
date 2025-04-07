@@ -8,6 +8,7 @@ package top.xcyyds.wxfbackendclient.module.comment.pojo.dto;
  */
 
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
+import top.xcyyds.wxfbackendclient.module.user.pojo.dto.SummaryAuthorInfo;
 
 import java.time.OffsetDateTime;
 
@@ -60,5 +61,14 @@ public class SummaryComment {
      * 评论状态：0-正常，1-已删除，2-审核中
      */
     private long status;
+    /**
+     * 用户基本信息
+     */
+    private SummaryAuthorInfo authorInfo;
+    /**
+     * 被回复的用户ID（UUID格式），用于回复评论/帖子的消息通知
+     */
+    private String replyToUserPublicId;
+
 }
 

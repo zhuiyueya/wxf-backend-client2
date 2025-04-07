@@ -7,16 +7,23 @@ package top.xcyyds.wxfbackendclient.module.comment.pojo.entity;
  * @Version:
  */
 
+import jakarta.persistence.*;
+import top.xcyyds.wxfbackendclient.common.ContentState;
+
 import java.time.OffsetDateTime;
 
 /**
  * comment
  */
 @lombok.Data
+@Table
+@Entity
 public class Comment {
     /**
      * 评论的唯一标识符，自增主键
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long commentId;
     /**
      * 评论内容
@@ -53,6 +60,10 @@ public class Comment {
     /**
      * 评论状态：0-正常，1-已删除，2-审核中
      */
-    private long status;
+    private ContentState status;
+    /**
+     * 被回复的用户ID（UUID格式），用于回复评论/帖子的消息通知
+     */
+    private String replyToUserPublicId;
 }
 
