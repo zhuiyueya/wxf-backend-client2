@@ -28,7 +28,7 @@ public class CommentController {
     }
 
     @PostMapping("add/comment")
-    public Result<AddChildCommentResponse> addChildComment(Authentication authentication, @ModelAttribute AddPostCommentRequest addChildCommentRequest) {
+    public Result<AddChildCommentResponse> addChildComment(Authentication authentication, @ModelAttribute AddChildCommentRequest addChildCommentRequest) {
         addChildCommentRequest.setPublicId(authentication.getPrincipal().toString());
         return Result.success(commentService.addChildComment(addChildCommentRequest));
     }

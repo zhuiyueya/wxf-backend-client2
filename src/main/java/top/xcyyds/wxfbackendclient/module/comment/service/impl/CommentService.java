@@ -68,8 +68,34 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public AddChildCommentResponse addChildComment(AddPostCommentRequest addChildCommentRequest) {
-        return null;
+    public AddChildCommentResponse addChildComment(AddChildCommentRequest addChildCommentRequest) {
+        //指定为东八区时间（偏移量“+08：00"）
+        OffsetDateTime beijingTime = OffsetDateTime.now(ZoneOffset.ofHours(8));
+        //上传文件
+        AddMediaAttachmentRequest addMediaAttachmentRequest=new AddMediaAttachmentRequest();
+        addMediaAttachmentRequest.setTargetType(TargetType.COMMENT);
+        addMediaAttachmentRequest.setMediaAttachment(addChildCommentRequest.getMediaAttachment());
+        addMediaAttachmentRequest.setPublicId(addChildCommentRequest.getPublicId());
+        MediaAttachment addMediaAttachmentResponse=mediaAttachmentService.addMediaAttachment(addMediaAttachmentRequest);
+        //获取帖子
+        Post post=postService.getPost(addChildCommentRequest.getPostId());
+
+        //设置评论信息
+        Comment comment=new Comment();
+        comment.setContent(addChildCommentRequest.getContent());
+        comment.setLikeCount(0);
+        comment.setReplyCount(0);
+        comment.setPublicId(addChildCommentRequest.getPublicId());
+        comment.setReplyToUserPublicId(addChildCommentRequest.getReplyToUserPublicId());
+        comment.setStatus(ContentState.PUBLISHED);
+        comment.setCreateTime(beijingTime);
+        comment.setMediaAttachment(addMediaAttachmentResponse);
+        comment.setPost(post);
+        comment.setParentCommentId(addChildCommentRequest.getParentCommentId());
+        comment.setReplyToNickname(addChildCommentRequest.getReplyToNickName());
+
+        comment=commentRepository.save(comment);
+        return convertToAddChildCommentResponse(comment);
     }
 
     @Override
@@ -94,5 +120,22 @@ public class CommentService implements ICommentService {
         addPostCommentResponse.setMediaAttachment(mediaAttachmentService.convertToSummaryMediaAttachment(comment.getMediaAttachment()));
         addPostCommentResponse.setAuthorInfo(userService.getSummaryAuthorInfoByPublicId(comment.getPublicId()));
         return addPostCommentResponse;
+    }
+    private AddChildCommentResponse convertToAddChildCommentResponse(Comment comment) {
+        AddChildCommentResponse addChildCommentResponse=new AddChildCommentResponse();
+        addChildCommentResponse.setCommentId(comment.getCommentId());
+        addChildCommentResponse.setPostId(comment.getPost().getPostId());
+        addChildCommentResponse.setContent(comment.getContent());
+        addChildCommentResponse.setStatus(comment.getStatus());
+        addChildCommentResponse.setCreateTime(comment.getCreateTime());
+        addChildCommentResponse.setLikeCount(comment.getLikeCount());
+        addChildCommentResponse.setReplyCount(comment.getReplyCount());
+        addChildCommentResponse.setMediaAttachment(mediaAttachmentService.convertToSummaryMediaAttachment(comment.getMediaAttachment()));
+        addChildCommentResponse.setAuthorInfo(userService.getSummaryAuthorInfoByPublicId(comment.getPublicId()));
+        addChildCommentResponse.setReplyToNickname(comment.getReplyToNickname());
+        addChildCommentResponse.setPublicId(comment.getPublicId());
+        addChildCommentResponse.setParentCommentId(comment.getParentCommentId());
+
+        return addChildCommentResponse;
     }
 }

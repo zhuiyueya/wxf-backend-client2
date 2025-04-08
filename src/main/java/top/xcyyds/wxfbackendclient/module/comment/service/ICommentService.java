@@ -12,7 +12,7 @@ import top.xcyyds.wxfbackendclient.module.comment.pojo.dto.*;
 public interface ICommentService {
     AddPostCommentResponse addPostComment(AddPostCommentRequest addPostCommentRequest);
 
-    AddChildCommentResponse addChildComment(AddPostCommentRequest addChildCommentRequest);
+    AddChildCommentResponse addChildComment(AddChildCommentRequest addChildCommentRequest);
 
     ListCommentsResponse listPostComments(ListCommentsRequest listCommentsRequest);
 
