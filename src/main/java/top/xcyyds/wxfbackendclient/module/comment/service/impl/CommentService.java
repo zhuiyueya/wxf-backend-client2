@@ -223,7 +223,38 @@ public class CommentService implements ICommentService {
 
     @Override
     public ListChildCommentsResponse listChildComments(ListChildCommentsRequest listChildCommentsRequest) {
-        return null;
+        List<Comment>comments=queryChildComments(listChildCommentsRequest);
+        return convertToListChildCommentsResponse(comments);
+    }
+
+    private List<Comment> queryChildComments(ListChildCommentsRequest listChildCommentsRequest) {
+        CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+        CriteriaQuery<Comment> query=cb.createQuery(Comment.class);
+        Root<Comment> root=query.from(Comment.class);
+        List<Predicate> predicates=new ArrayList<>();
+        predicates.add(cb.equal(root.get("parentCommentId"),listChildCommentsRequest.getParentCommentId()));
+        predicates.add(cb.equal(root.get("status"),ContentState.PUBLISHED));
+        //时间游标处理
+        if(StringUtils.hasText(listChildCommentsRequest.getTimeCursor())){
+            OffsetDateTime cursorTime=OffsetDateTime.parse(listChildCommentsRequest.getTimeCursor());
+            predicates.add(cb.lessThan(root.get("createTime"),cursorTime));
+        }
+        query.where(predicates.toArray(new Predicate[0])).orderBy(cb.desc(root.get("createTime")));
+        return entityManager.createQuery(query)
+                .setMaxResults((int)listChildCommentsRequest.getPageSize())
+                .getResultList();
+    }
+
+    private ListChildCommentsResponse convertToListChildCommentsResponse(List<Comment> comments) {
+        ListChildCommentsResponse listChildCommentsResponse=new ListChildCommentsResponse();
+        if(comments.size()==0){
+            return listChildCommentsResponse;
+        }
+        listChildCommentsResponse.setComments(comments.stream()
+                .map(comment -> convertToSummaryComment(comment,false))
+                .collect(Collectors.toList()));
+        listChildCommentsResponse.setTimeCursor(comments.get(comments.size()-1).getCreateTime().toString());
+        return listChildCommentsResponse;
     }
 
     private AddPostCommentResponse convertToAddPostCommentResponse(Comment comment) {
