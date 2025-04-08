@@ -8,8 +8,11 @@ package top.xcyyds.wxfbackendclient.module.comment.pojo.entity;
  */
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import top.xcyyds.wxfbackendclient.common.ContentState;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 
 import java.time.OffsetDateTime;
@@ -44,10 +47,6 @@ public class Comment {
      */
     private Long parentCommentId;
     /**
-     * 关联的帖子ID，外键引用posts表的post_id
-     */
-    private long postId;
-    /**
      * 发表评论的用户ID
      */
     private String publicId;
@@ -74,5 +73,12 @@ public class Comment {
     @JoinColumn(name="post_id")
     @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
     private Post post;
+    /**
+     * 评论的媒体附件
+     */
+    @OneToOne(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
+    private MediaAttachment mediaAttachment;
+
 }
 
