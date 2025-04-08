@@ -4,6 +4,7 @@ import top.xcyyds.wxfbackendclient.module.post.pojo.dto.AddPostRequest;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsRequest;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsResponse;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.SummaryPost;
+import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 
 /**
  * @Author: chasemoon
@@ -13,9 +14,11 @@ import top.xcyyds.wxfbackendclient.module.post.pojo.dto.SummaryPost;
  */
 
 public interface IPostService {
-    SummaryPost getPost(String postId);
+    SummaryPost getPostDetail(String postId);
 
     ListPostsResponse listPosts(ListPostsRequest request);
 
     SummaryPost addPost(AddPostRequest request);
+
+    Post getPost(long postId);
 }

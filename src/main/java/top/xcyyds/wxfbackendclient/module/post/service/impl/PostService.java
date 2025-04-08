@@ -49,7 +49,7 @@ import static java.lang.Long.min;
  * @Version:
  */
 @Slf4j
-@Service
+@Service("PostService")
 public class PostService implements IPostService {
     @Autowired
     private PostRepository postRepository;
@@ -60,7 +60,7 @@ public class PostService implements IPostService {
 
 
     @Override
-    public SummaryPost getPost(String postId) {
+    public SummaryPost getPostDetail(String postId) {
         return null;
     }
 
@@ -156,6 +156,11 @@ public class PostService implements IPostService {
         return convert2SummaryPost(post, true);
     }
 
+    @Override
+    public Post getPost(long postId) {
+        return postRepository.findByPostId(postId);
+    }
+
 
     private Post convert2Post(AddPostRequest request) {
         Post post=new Post();
@@ -192,11 +197,12 @@ public class PostService implements IPostService {
     public SummaryPost convert2SummaryPost(Post post,boolean isComplete){
 
         //获取作者基础信息
-        GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
-        getUserInfoRequest.setPublicId(post.getPublicId());
-        GetUserInfoResponse getUserInfoResponse=userService.getUserInfo(getUserInfoRequest);
-        SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
-        BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
+        SummaryAuthorInfo summaryAuthorInfo=userService.getSummaryAuthorInfoByPublicId(post.getPublicId());
+//        GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
+//        getUserInfoRequest.setPublicId(post.getPublicId());
+//        GetUserInfoResponse getUserInfoResponse=userService.getUserInfo(getUserInfoRequest);
+//        SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
+//        BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
 
 
         //获取媒体附件列表

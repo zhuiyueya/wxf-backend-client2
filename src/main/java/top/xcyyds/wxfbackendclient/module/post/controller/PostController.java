@@ -29,7 +29,7 @@ public class PostController {
     }
     @GetMapping("/get/{postId}")
     public Result<SummaryPost> getPost(@PathVariable String postId) {
-        return Result.success(postService.getPost(postId));
+        return Result.success(postService.getPostDetail(postId));
     }
     //curl -X POST "http://localhost:8080/api/v1/posts/add" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3NzczOGI2YjU3ZThhYjNhMDNlOWU4ZGY2MmY1MWJlOWMxZjVhMmRiM2M0YWQzNjNlNTI0NzU1OWFiYTc3NTg4IiwiaWF0IjoxNzQzNjg4MjQzLCJleHAiOjE3NDM3MjQyNDN9.nUMy6J-a685AkDrZrsagM0nW_VSPO3jbKSH3u5OhTEo" -F "content=This is a new post" -F "postType=HELP_POST" -F "mediaAttachments=@./中文.jpg"
     @PostMapping("/add")                                          //@ModelAttribute用于传统的表单提交，application/x-www-form-urlencoded 或 multipart/form-data  ，  @RequestBody​Content-Type 要求必须为 application/json 等 body 数据格式
