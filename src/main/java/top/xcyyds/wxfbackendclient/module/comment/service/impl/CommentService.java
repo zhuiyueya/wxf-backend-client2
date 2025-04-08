@@ -101,6 +101,35 @@ public class CommentService implements ICommentService {
     @Override
     public ListCommentsResponse listPostComments(ListCommentsRequest listCommentsRequest) {
         return null;
+        //查询父评论
+        List<Comment>parents=queryParentComments(listCommentsRequest);
+        log.info("帖子{}的父评论数量{}",listCommentsRequest.getPostId(),parents.size());
+        //批量获取父评论对应最新子评论
+        Map<Long, Optional<Comment>> childCommentMap=queryLatestOneChildComments(parents);
+
+        //构建二维结构
+        List<List<SummaryComment>> structed=parents.stream().map(p->{
+            List<SummaryComment>group=new ArrayList<>();
+            group.add(convertToSummaryComment(p,true));
+            childCommentMap.getOrDefault(p.getCommentId(), Optional.empty())
+                    .ifPresent(child->
+                            group.add(convertToSummaryComment(child,false))
+                    );
+            return group;
+        }).collect(Collectors.toList());
+
+        ListCommentsResponse listCommentsResponse=new ListCommentsResponse();
+        listCommentsResponse.setComments(structed);
+        return listCommentsResponse;
+    }
+
+    private Map<Long, Optional<Comment>> queryLatestOneChildComments(List<Comment> parents) {
+    }
+
+    private List<Comment> queryParentComments(ListCommentsRequest listCommentsRequest) {
+    }
+
+    private SummaryComment convertToSummaryComment(Comment comment, boolean isParent) {
     }
 
     @Override
