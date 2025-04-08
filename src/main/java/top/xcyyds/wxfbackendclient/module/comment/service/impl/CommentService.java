@@ -1,8 +1,17 @@
 package top.xcyyds.wxfbackendclient.module.comment.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Parameter;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import top.xcyyds.wxfbackendclient.common.ContentState;
 import top.xcyyds.wxfbackendclient.module.comment.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
@@ -18,6 +27,8 @@ import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author: chasemoon
@@ -25,6 +36,7 @@ import java.time.ZoneOffset;
  * @Description:
  * @Version:v1
  */
+@Slf4j
 @Service("CommentService")
 public class CommentService implements ICommentService {
     @Autowired
@@ -37,6 +49,9 @@ public class CommentService implements ICommentService {
     private IPostService postService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private  EntityManager entityManager;
 
     @Override
     public AddPostCommentResponse addPostComment(AddPostCommentRequest addPostCommentRequest) {
@@ -100,7 +115,6 @@ public class CommentService implements ICommentService {
 
     @Override
     public ListCommentsResponse listPostComments(ListCommentsRequest listCommentsRequest) {
-        return null;
         //查询父评论
         List<Comment>parents=queryParentComments(listCommentsRequest);
         log.info("帖子{}的父评论数量{}",listCommentsRequest.getPostId(),parents.size());
@@ -124,12 +138,87 @@ public class CommentService implements ICommentService {
     }
 
     private Map<Long, Optional<Comment>> queryLatestOneChildComments(List<Comment> parents) {
+        if(parents.isEmpty()){
+            return Collections.emptyMap();
+        }
+
+        String sql= """
+                SELECT * FROM (
+                    SELECT
+                         *,
+                         ROW_NUMBER() OVER(
+                             PARTITION BY parent_comment_id
+                             ORDER BY create_time DESC
+                         ) AS rn
+                    FROM comment
+                    WHERE parent_comment_id IN (:parentIds)
+                        AND status = :stateCode
+                ) AS ranked
+                WHERE rn = 1
+                """;
+
+        try {
+
+            List<Comment> childs = entityManager.createNativeQuery(sql, Comment.class)
+                    .setParameter("parentIds",
+                            parents.stream().map(Comment::getCommentId).collect(Collectors.toList()))
+                    .setParameter("stateCode", ContentState.PUBLISHED.getCode())
+                    .getResultList();//getResultList会让查询数据库的操作开始执行
+
+
+            return childs.stream()
+                    .collect(Collectors.groupingBy(
+                            Comment::getParentCommentId,
+                            Collectors.reducing((a, b) -> a)
+                    ));
+        }catch (Exception e){
+            throw new RuntimeException("查询子评论失败",e);
+        }
     }
 
     private List<Comment> queryParentComments(ListCommentsRequest listCommentsRequest) {
+        CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+        CriteriaQuery<Comment> query=cb.createQuery(Comment.class);
+        Root<Comment> root=query.from(Comment.class);
+
+        List<Predicate> predicates=new ArrayList<>();
+        predicates.add(cb.equal(root.get("post").get("postId"),listCommentsRequest.getPostId()));
+        predicates.add(cb.isNull(root.get("parentCommentId")));
+        predicates.add(cb.equal(root.get("status"),ContentState.PUBLISHED));
+
+        //时间游标处理
+        if(StringUtils.hasText(listCommentsRequest.getTimeCursor())){
+            OffsetDateTime cursorTime=OffsetDateTime.parse(listCommentsRequest.getTimeCursor());
+            predicates.add(cb.lessThan(root.get("createTime"),cursorTime));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]))
+                .orderBy(cb.desc(root.get("createTime")));
+
+        return entityManager.createQuery(query)
+                .setMaxResults((int)listCommentsRequest.getPageSize())
+                .getResultList();
     }
 
     private SummaryComment convertToSummaryComment(Comment comment, boolean isParent) {
+        SummaryComment summaryComment=new SummaryComment();
+        summaryComment.setCommentId(comment.getCommentId());
+        summaryComment.setPostId(comment.getPost().getPostId());
+        summaryComment.setContent(comment.getContent());
+        summaryComment.setStatus(comment.getStatus());
+        summaryComment.setCreateTime(comment.getCreateTime());
+        summaryComment.setLikeCount(comment.getLikeCount());
+        summaryComment.setReplyCount(comment.getReplyCount());
+        if (comment.getMediaAttachment()!=null)
+            summaryComment.setMediaAttachment(mediaAttachmentService.convertToSummaryMediaAttachment(comment.getMediaAttachment()));
+        summaryComment.setAuthorInfo(userService.getSummaryAuthorInfoByPublicId(comment.getPublicId()));
+        if(comment.getReplyToNickname()!=null)
+            summaryComment.setReplyToNickname(comment.getReplyToNickname());
+        summaryComment.setReplyToUserPublicId(comment.getReplyToUserPublicId());
+        if(isParent)
+            summaryComment.setParentCommentId(comment.getParentCommentId());
+
+        return summaryComment;
     }
 
     @Override
