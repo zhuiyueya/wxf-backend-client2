@@ -1,6 +1,7 @@
 package top.xcyyds.wxfbackendclient.module.comment.pojo.dto;
 
 import lombok.Data;
+import top.xcyyds.wxfbackendclient.common.ContentState;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.SummaryAuthorInfo;
 
@@ -49,7 +50,7 @@ public class AddPostCommentResponse {
     /**
      * 评论状态：0-正常，1-已删除，2-审核中
      */
-    private long status;
+    private ContentState status;
     /**
      * 用户基本信息
      */
