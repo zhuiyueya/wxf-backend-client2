@@ -20,4 +20,5 @@ public class AddChildCommentRequest {
      * 被回复的用户ID（UUID格式），用于回复评论/帖子的消息通知
      */
     private String replyToUserPublicId;
+    private long postId;
 }
