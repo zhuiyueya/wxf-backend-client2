@@ -1,4 +1,4 @@
-package top.xcyyds.wxfbackendclient.module.like.pojo.entity;
+package top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.entity;
 
 /**
  * @Author: chasemoon
@@ -6,6 +6,8 @@ package top.xcyyds.wxfbackendclient.module.like.pojo.entity;
  * @Description:
  * @Version:
  */
+
+import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums.TargetType;
 
 import java.time.OffsetDateTime;
 
