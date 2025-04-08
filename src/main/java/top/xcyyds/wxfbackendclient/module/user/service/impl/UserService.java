@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.UploadMediaResponse;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.IMediaStorageService;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.DepartmentRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.MajorRepository;
 import top.xcyyds.wxfbackendclient.module.user.persistence.repository.UserRepository;
@@ -32,7 +34,8 @@ public class UserService implements IUserService {
     private DepartmentRepository departmentRepository;
     @Autowired
     private MajorRepository majorRepository;
-
+    @Autowired
+    private IMediaStorageService mediaStorageService;
 
     @Override
     public GetUserSelfInfoResponse getUserSelfInfo(GetUserSelfInfoRequest request) {
@@ -110,21 +113,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId) {
-        GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
-        getUserInfoRequest.setPublicId(publicId);
-        GetUserInfoResponse getUserInfoResponse=getUserInfo(getUserInfoRequest);
-        SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
-        BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
-        return summaryAuthorInfo;
+    //更新用户头像的url
+    public GetUserSelfInfoResponse updateUserAvatar(UpdateUserSelfAvatarRequest updateUserSelfAvatarRequest) {
+        User user=userRepository.findByPublicId(updateUserSelfAvatarRequest.getPublicId());
+        UploadMediaResponse uploadResponse = mediaStorageService.uploadMedia(updateUserSelfAvatarRequest.getMultipartFile(),"/avatar");//写死，后可修改
+        user.setAvatar(uploadResponse.getMediaPath());
+        return convertToGetUserSelfInfoResponse(userRepository.save(user));
     }
+
 
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();
 
         //设置返回信息
         response.setPublicId(user.getPublicId());
-        response.setAvatar(user.getAvatar());
+        response.setAvator(user.getAvatar());
         response.setLevel(user.getLevel());
         response.setMoney(user.getMoney());
         response.setRole(user.getRole());

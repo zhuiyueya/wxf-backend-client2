@@ -9,11 +9,7 @@ package top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.ToString;
-import top.xcyyds.wxfbackendclient.common.ContentState;
-import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.TargetType;
-import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.enums.MediaType;
+import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 
 import java.time.OffsetDateTime;
@@ -40,9 +36,9 @@ public class MediaAttachment {
      */
     private Long fileSize;
     /**
-     * 媒体类型代码
+     * 媒体类型代码（1-图片, 2-视频, 3-音频）
      */
-    private MediaType mediaType;
+    private Long mediaType;
     /**
      * 上传者用户ID（与posts.public_id一致）
      */
@@ -50,7 +46,7 @@ public class MediaAttachment {
     /**
      * 软删除标记（0-正常，1-已删除）
      */
-    private ContentState status;
+    private Long status;
     /**
      * CDN存储路径（随机图片/视频URL）
      */
@@ -72,9 +68,4 @@ public class MediaAttachment {
     @JoinColumn(name="post_id")
     @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
     private Post post;
-
-    @OneToOne
-    @JoinColumn(name = "comment_id")
-    @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
-    private Comment comment;
 }
