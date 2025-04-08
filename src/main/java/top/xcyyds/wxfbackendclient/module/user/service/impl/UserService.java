@@ -109,6 +109,16 @@ public class UserService implements IUserService {
         return getUserInfoResponse;
     }
 
+    @Override
+    public SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId) {
+        GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
+        getUserInfoRequest.setPublicId(publicId);
+        GetUserInfoResponse getUserInfoResponse=getUserInfo(getUserInfoRequest);
+        SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
+        BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
+        return summaryAuthorInfo;
+    }
+
     private GetUserSelfInfoResponse convertToGetUserSelfInfoResponse(User user) {
         GetUserSelfInfoResponse response = new GetUserSelfInfoResponse();
 

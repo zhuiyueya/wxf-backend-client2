@@ -19,4 +19,6 @@ public interface IUserService {
     GetUserSelfInfoResponse updateUserDepartment(UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest);
 
     GetUserInfoResponse getUserInfo(GetUserInfoRequest getUserInfoRequest);
+
+    SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId);
 }
