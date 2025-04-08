@@ -6,7 +6,6 @@ package top.xcyyds.wxfbackendclient.common;
  * @Description:
  * @Version:
  */
-
 public enum ContentState {
     // 基础状态
     DRAFT(0,"DRAFT"),           // 草稿
@@ -28,5 +27,8 @@ public enum ContentState {
     ContentState(int code, String value) {
         this.code = code;
         this.value = value;
+    }
+    public int getCode() {
+        return code;
     }
 }
