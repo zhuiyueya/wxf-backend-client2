@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Data
 public class AddPostCommentRequest {
-    private String postId;
+    private long postId;
     private String content;
     private String publicId;
     private MultipartFile mediaAttachment;
