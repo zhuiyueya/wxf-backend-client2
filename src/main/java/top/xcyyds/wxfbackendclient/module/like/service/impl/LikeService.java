@@ -8,7 +8,7 @@ import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
 import top.xcyyds.wxfbackendclient.module.comment.repository.CommentRepository;
 import top.xcyyds.wxfbackendclient.module.like.pojo.dto.AddUserLikeRequest;
 import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetLikeInfoResponse;
-import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeResponse;
+import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeRequest;
 import top.xcyyds.wxfbackendclient.module.like.pojo.entity.Like;
 import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.like.service.ILikeService;
@@ -36,9 +36,9 @@ public class LikeService implements ILikeService {
     private CommentRepository commentRepository;
 
     @Override
-    public GetLikeInfoResponse getUserLike(String userId, GetUserLikeResponse getUserLikeResponse) {
-        long targetId = getUserLikeResponse.getTargetId();
-        TargetType targetType = getUserLikeResponse.getTargetType();
+    public GetLikeInfoResponse getUserLike(String userId, GetUserLikeRequest getUserLikeRequest) {
+        long targetId = getUserLikeRequest.getTargetId();
+        TargetType targetType = getUserLikeRequest.getTargetType();
 
         GetLikeInfoResponse response = new GetLikeInfoResponse();
         boolean isLiked = likeRepository.existsByUserPublicIdAndTargetIdAndTargetType(userId, targetId, targetType);

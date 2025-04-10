@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import top.xcyyds.wxfbackendclient.common.Result;
 import top.xcyyds.wxfbackendclient.module.like.pojo.dto.AddUserLikeRequest;
 import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetLikeInfoResponse;
-import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeResponse;
+import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeRequest;
 import top.xcyyds.wxfbackendclient.module.like.service.impl.LikeService;
 
 /**
@@ -28,7 +28,7 @@ public class likeController {
         return Result.success(likeService.addUserLike(authentication.getPrincipal().toString(),addUserLikeRequest));
     }
     @GetMapping("/getLike")
-    public Result<GetLikeInfoResponse> getUserLike(Authentication authentication, @RequestBody GetUserLikeResponse getUserLikeResponse){
-        return Result.success(likeService.getUserLike(authentication.getPrincipal().toString(),getUserLikeResponse));
+    public Result<GetLikeInfoResponse> getUserLike(Authentication authentication, @RequestBody GetUserLikeRequest getUserLikeRequest){
+        return Result.success(likeService.getUserLike(authentication.getPrincipal().toString(), getUserLikeRequest));
     }
 }

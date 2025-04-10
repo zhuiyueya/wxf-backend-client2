@@ -68,4 +68,5 @@ public class MediaAttachment {
     @JoinColumn(name="post_id")
     @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
     private Post post;
+
 }

@@ -10,7 +10,7 @@ import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
  * @Version:
  */
 @Data
-public class GetUserLikeResponse {
+public class GetUserLikeRequest {
     private long targetId;
     private TargetType targetType;
 }

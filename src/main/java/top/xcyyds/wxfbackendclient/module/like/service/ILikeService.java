@@ -2,7 +2,7 @@ package top.xcyyds.wxfbackendclient.module.like.service;
 
 import top.xcyyds.wxfbackendclient.module.like.pojo.dto.AddUserLikeRequest;
 import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetLikeInfoResponse;
-import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeResponse;
+import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeRequest;
 
 /**
  * @Author: theManager
@@ -12,7 +12,7 @@ import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeResponse;
  */
 
 public interface ILikeService {
-    GetLikeInfoResponse getUserLike(String userId,GetUserLikeResponse getUserLikeResponse);
+    GetLikeInfoResponse getUserLike(String userId, GetUserLikeRequest getUserLikeRequest);
 
-    GetLikeInfoResponse addUserLike(String userId,AddUserLikeRequest addUserLikeRequest);
+    GetLikeInfoResponse addUserLike(String userId, AddUserLikeRequest addUserLikeRequest);
 }
