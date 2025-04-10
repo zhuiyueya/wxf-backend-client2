@@ -60,8 +60,9 @@ public class PostService implements IPostService {
 
 
     @Override
-    public SummaryPost getPostDetail(String postId) {
-        return null;
+    public SummaryPost getPostDetail(long postId) {
+        Post post=postRepository.findById(postId).orElse(null);
+        return convert2SummaryPost(post,true);
     }
 
     @Override
@@ -145,7 +146,6 @@ public class PostService implements IPostService {
         };
     }
 
-
     @Override
     public SummaryPost addPost(AddPostRequest request) {
         Post post=convert2Post(request);
@@ -195,7 +195,10 @@ public class PostService implements IPostService {
         return post;
     }
     public SummaryPost convert2SummaryPost(Post post,boolean isComplete){
-
+        SummaryPost summaryPost=new SummaryPost();
+        if (post==null){
+            return summaryPost;
+        }
         //获取作者基础信息
         SummaryAuthorInfo summaryAuthorInfo=userService.getSummaryAuthorInfoByPublicId(post.getPublicId());
 //        GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
@@ -216,7 +219,7 @@ public class PostService implements IPostService {
         }
 
 
-        SummaryPost summaryPost=new SummaryPost();
+
 
         //设置SummaryPost的成员
         summaryPost.setComplete(isComplete);
