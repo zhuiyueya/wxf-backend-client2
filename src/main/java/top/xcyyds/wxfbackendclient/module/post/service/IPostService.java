@@ -14,7 +14,7 @@ import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
  */
 
 public interface IPostService {
-    SummaryPost getPostDetail(String postId);
+    SummaryPost getPostDetail(long postId);
 
     ListPostsResponse listPosts(ListPostsRequest request);
 

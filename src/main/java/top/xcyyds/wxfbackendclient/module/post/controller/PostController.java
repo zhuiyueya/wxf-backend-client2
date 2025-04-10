@@ -28,7 +28,7 @@ public class PostController {
         return Result.success(postService.listPosts(request));
     }
     @GetMapping("/get/{postId}")
-    public Result<SummaryPost> getPost(@PathVariable String postId) {
+    public Result<SummaryPost> getPost(@PathVariable long postId) {
         return Result.success(postService.getPostDetail(postId));
     }
     //curl -X POST "http://localhost:8080/api/v1/posts/add" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3NzczOGI2YjU3ZThhYjNhMDNlOWU4ZGY2MmY1MWJlOWMxZjVhMmRiM2M0YWQzNjNlNTI0NzU1OWFiYTc3NTg4IiwiaWF0IjoxNzQzNjg4MjQzLCJleHAiOjE3NDM3MjQyNDN9.nUMy6J-a685AkDrZrsagM0nW_VSPO3jbKSH3u5OhTEo" -F "content=This is a new post" -F "postType=HELP_POST" -F "mediaAttachments=@./中文.jpg"
