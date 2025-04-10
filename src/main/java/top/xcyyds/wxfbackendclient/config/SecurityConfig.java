@@ -45,7 +45,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())//关闭csrf
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/login","/api/v1/posts/list","/api/v1/comments/list/postComment","/api/v1/comments/list/childComment").permitAll()//对外公开的接口
+                        .requestMatchers("/api/v1/auth/login","/api/v1/posts/list","/api/v1/comments/list/postComment","/api/v1/comments/list/childComment","/api/v1/posts/get/**").permitAll()//对外公开的接口
                         .anyRequest().authenticated()//其他接口需要验证
 
                 ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)//在用户名密码过滤器之前先执行token过滤器
