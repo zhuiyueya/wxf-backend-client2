@@ -1,4 +1,4 @@
-package top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums;
+package top.xcyyds.wxfbackendclient.module.like.pojo.enums;
 
 /**
  * @Author: chasemoon

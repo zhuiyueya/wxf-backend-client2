@@ -9,7 +9,7 @@ package top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums.TargetType;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 
 import java.time.OffsetDateTime;
