@@ -18,7 +18,10 @@ public interface IUserService {
 
     GetUserSelfInfoResponse updateUserDepartment(UpdateUserSelfDepartmentRequest updateUserSelfDepartmentRequest);
 
+    GetUserSelfInfoResponse updateUserAvatar(UpdateUserSelfAvatarRequest updateUserSelfAvatarRequest);
+
     GetUserInfoResponse getUserInfo(GetUserInfoRequest getUserInfoRequest);
 
     SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId);
+
 }
