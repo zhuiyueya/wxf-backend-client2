@@ -22,4 +22,6 @@ public interface IUserService {
 
     GetUserInfoResponse getUserInfo(GetUserInfoRequest getUserInfoRequest);
 
+    SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId);
+
 }

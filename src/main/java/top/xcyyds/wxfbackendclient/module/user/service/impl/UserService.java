@@ -113,6 +113,16 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId) {
+        GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
+        getUserInfoRequest.setPublicId(publicId);
+        GetUserInfoResponse getUserInfoResponse=getUserInfo(getUserInfoRequest);
+        SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
+        BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
+        return summaryAuthorInfo;
+    }
+
+    @Override
     //更新用户头像的url
     public GetUserSelfInfoResponse updateUserAvatar(UpdateUserSelfAvatarRequest updateUserSelfAvatarRequest) {
         User user=userRepository.findByPublicId(updateUserSelfAvatarRequest.getPublicId());
