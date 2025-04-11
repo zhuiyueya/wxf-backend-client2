@@ -1,9 +1,9 @@
-package top.xcyyds.wxfbackendclient.module.like.pojo.entity.service.impl;
+package top.xcyyds.wxfbackendclient.module.like.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.dto.GetUserLikeResponse;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.service.ILikeService;
+import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeResponse;
+import top.xcyyds.wxfbackendclient.module.like.service.ILikeService;
 
 /**
  * @Author: chasemoon
@@ -18,6 +18,6 @@ public class LikeService implements ILikeService {
 
     @Override
     public GetUserLikeResponse getUserLikeResponse(GetUserLikeResponse getUserLikeResponse){
-
+        return null;
     }
 }

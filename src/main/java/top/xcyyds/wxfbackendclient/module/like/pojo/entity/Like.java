@@ -1,4 +1,4 @@
-package top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.entity;
+package top.xcyyds.wxfbackendclient.module.like.pojo.entity;
 
 /**
  * @Author: chasemoon
@@ -7,7 +7,8 @@ package top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.entity;
  * @Version:
  */
 
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums.TargetType;
+import jakarta.persistence.*;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 
 import java.time.OffsetDateTime;
 
@@ -15,6 +16,8 @@ import java.time.OffsetDateTime;
  * like，点赞信息实体
  */
 @lombok.Data
+@Entity
+@Table
 public class Like {
     /**
      * 点赞时间（ISO8601格式）
@@ -23,6 +26,8 @@ public class Like {
     /**
      * 点赞记录唯一标识符（自增主键）
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long likeId;
     /**
      * 被点赞的目标ID（帖子或评论ID）

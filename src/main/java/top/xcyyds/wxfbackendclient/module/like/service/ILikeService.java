@@ -1,6 +1,7 @@
-package top.xcyyds.wxfbackendclient.module.like.pojo.entity.service;
+package top.xcyyds.wxfbackendclient.module.like.service;
 
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.dto.*;
+import top.xcyyds.wxfbackendclient.module.like.pojo.dto.GetUserLikeResponse;
+
 
 /**
  * @Author: theManager
