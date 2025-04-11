@@ -12,7 +12,7 @@ import jakarta.persistence.*;
 import lombok.ToString;
 import top.xcyyds.wxfbackendclient.common.ContentState;
 import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.TargetType;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.enums.MediaType;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 

@@ -151,7 +151,7 @@ public class PostService implements IPostService {
         Post post=convert2Post(request);
 
         post=postRepository.save(post);
-
+        log.info("1");
         //log.info("帖子创建成功：{}",post);
         return convert2SummaryPost(post, true);
     }
@@ -186,10 +186,13 @@ public class PostService implements IPostService {
             UploadMediaResponse uploadMediaResponse=selfOSSService.uploadMedia(request.getMediaAttachments().get(i),"/pic");
             MediaAttachment mediaAttachment=new MediaAttachment();
             mediaAttachment.setPost(post);
+            log.info("1");
             mediaAttachment.setPublicId(post.getPublicId());
+            log.info("1");
             mediaAttachment.setStoragePath(uploadMediaResponse.getMediaPath());
             mediaAttachment.setUploadTime(beijingTime);
             post.getMediaAttachments().add(mediaAttachment);
+            log.info("1");
         }
 
         return post;
@@ -207,7 +210,7 @@ public class PostService implements IPostService {
 //        SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
 //        BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
 
-
+        log.info("1");
         //获取媒体附件列表
         List<SummaryMediaAttachment> summaryMediaAttachments=new ArrayList<>();
         for(MediaAttachment mediaAttachment:post.getMediaAttachments()){
@@ -224,6 +227,7 @@ public class PostService implements IPostService {
         //设置SummaryPost的成员
         summaryPost.setComplete(isComplete);
         summaryPost.setPostId(post.getPostId());
+        log.info("1");
         summaryPost.setContent(post.getContent());
         summaryPost.setPostType(post.getPostType());
         summaryPost.setCreateTime(post.getCreateTime());

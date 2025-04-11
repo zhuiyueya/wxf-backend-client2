@@ -19,7 +19,7 @@ import java.time.OffsetDateTime;
 /**
  * like，点赞信息实体
  */
-@Table(name="like")
+@Table(name="likes")
 @lombok.Data
 @Entity
 public class Like {
@@ -47,7 +47,7 @@ public class Like {
 
     // 关联用户
     @ManyToOne
-    @JoinColumn(name = "user_public_id", referencedColumnName = "publicId", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "publicId", insertable = false, updatable = false)
     private User user;
 
     // 关联帖子

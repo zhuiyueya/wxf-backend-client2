@@ -23,11 +23,11 @@ public class likeController {
     @Autowired
     private LikeService likeService;
 
-    @PatchMapping("/isLike")
+    @PatchMapping("/addLike")
     public Result<GetLikeInfoResponse> updateUserSelfLike(Authentication authentication, @RequestBody AddUserLikeRequest addUserLikeRequest) {
         return Result.success(likeService.addUserLike(authentication.getPrincipal().toString(),addUserLikeRequest));
     }
-    @GetMapping("/getLike")
+    @PostMapping("/getLike")
     public Result<GetLikeInfoResponse> getUserLike(Authentication authentication, @RequestBody GetUserLikeRequest getUserLikeRequest){
         return Result.success(likeService.getUserLike(authentication.getPrincipal().toString(), getUserLikeRequest));
     }

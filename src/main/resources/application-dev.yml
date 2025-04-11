@@ -29,3 +29,10 @@ spring:
 jwt:
   secret: aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789abCDefGH=
   expiration: 36000000
+
+logging:
+  level:
+    org.springframework: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    t.x.w: DEBUG

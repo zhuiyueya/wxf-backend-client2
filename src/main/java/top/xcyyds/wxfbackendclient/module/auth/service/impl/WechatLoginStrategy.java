@@ -45,7 +45,8 @@ public class WechatLoginStrategy extends AbstractLoginStrategy {
     @Override
     public AuthenticationResult authenticate(LoginRequest loginRequest) {
         WechatLoginRequest wechatLoginRequest=(WechatLoginRequest)loginRequest;
-        String openId=getWechatOpenId(wechatLoginRequest.getCode());
+        // String openId=getWechatOpenId(wechatLoginRequest.getCode());
+        String openId=((WechatLoginRequest) loginRequest).getCode();
 
         //to do 从redis中查找appId对应的InternalId，加速查找
 
