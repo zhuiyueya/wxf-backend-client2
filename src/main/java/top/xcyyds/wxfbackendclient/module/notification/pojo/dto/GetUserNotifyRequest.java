@@ -24,7 +24,7 @@ public class GetUserNotifyRequest {
     /**
      * 时间游标，指获取早于该时间创建的通知
      */
-    private OffsetDateTime timeCursor;
+    private String timeCursor;
     /**
      * 用户公开ID
      */

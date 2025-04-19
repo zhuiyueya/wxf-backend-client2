@@ -2,7 +2,10 @@ package top.xcyyds.wxfbackendclient.module.notification.pojo.dto;
 
 import top.xcyyds.wxfbackendclient.common.ContentState;
 import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.enums.NotifyType;
+
+import java.time.OffsetDateTime;
 
 /**
  * @Author: chasemoon
@@ -15,7 +18,7 @@ public class GetUserNotifyResponse {
     /**
      * 通知消息的动作类型
      */
-    private String action;
+    private SubscriptionActionType action;
     /**
      * 内容
      */
@@ -23,7 +26,7 @@ public class GetUserNotifyResponse {
     /**
      * 创建时间
      */
-    private String createdAt;
+    private OffsetDateTime createdAt;
     /**
      * 通知消息的类型
      */
@@ -37,13 +40,21 @@ public class GetUserNotifyResponse {
      */
     private ContentState state;
     /**
-     * 目标Id
+     * 被通知源回复/点赞的id
      */
     private long targetId;
     /**
-     * 通知消息关联的对象类型
+     * 被通知源回复/点赞的实体类型
      */
     private TargetType targetType;
+    /**
+     * 发起通知的源id
+     */
+    private long sourceId;
+    /**
+     * 发起通知的源类型
+     */
+    private TargetType sourceType;
     /**
      * 用户消息通知表的id
      */

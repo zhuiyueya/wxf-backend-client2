@@ -2,6 +2,7 @@ package top.xcyyds.wxfbackendclient.module.notification.pojo.entity;
 
 import jakarta.persistence.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -10,6 +11,8 @@ import java.util.List;
  * @Description:
  * @Version:v1
  */
+@Entity
+@Table
 @lombok.Data
 public class Subscription {
     /**
@@ -25,7 +28,7 @@ public class Subscription {
     /**
      * 创建时间
      */
-    private String createdAt;
+    private OffsetDateTime createdAt;
     /**
      * 订阅id
      */

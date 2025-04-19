@@ -10,4 +10,5 @@ import lombok.Data;
  */
 @Data
 public class PullReminderResponse {
+    private long totalUnreadCount;
 }
