@@ -3,6 +3,8 @@ package top.xcyyds.wxfbackendclient.module.notification.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
 
+import java.util.List;
+
 /**
  * @Author: chasemoon
  * @CreateTime: 2025-04-12
@@ -11,4 +13,5 @@ import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionA
  */
 
 public interface SubscriptionActionTypeRepository extends JpaRepository<SubscriptionActionType, Long> {
+    SubscriptionActionType findByActionName(String actionName);
 }

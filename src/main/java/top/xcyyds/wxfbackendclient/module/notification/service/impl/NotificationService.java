@@ -39,6 +39,19 @@ public class NotificationService implements INotificationService {
 
     @Autowired
     private ReminderProducer reminderProducer;
+
+    @Autowired
+    private SubscriptionActionTypeRepository subscriptionActionTypeRepository;
+
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private UserNotifyRepository userNotifyRepository;
+
+    @Autowired
+    private SubscriptionConfigRepository subscriptionConfigRepository;
+
     @Override
     public GetUserNotifyResponse getUserNotify(GetUserNotifyRequest request) {
         return null;
@@ -113,6 +126,34 @@ public class NotificationService implements INotificationService {
     public SubscriptionActionType getSubscriptionActionType(String actionName) {
         return subscriptionActionTypeRepository.findByActionName(actionName);
     }
+
+    @Override
+    public Notify getNotifyByNotifyId(long notifyId) {
+        return notifyRepository.findByNotifyId(notifyId);
+    }
+
+    @Override
+    public List<Long> getSubscriptionUserInternalIdsByNotify(Notify notify) {
+        //查询订阅了该通知的用户
+        List<Subscription>subscriptionss=subscriptionRepository.findAllByTargetIdAndTargetType(notify.getSourceId(),notify.getSourceType().toString());
+
+        List<Long>userInternalIds=new ArrayList<>();
+        for (Subscription subscription:subscriptionss){
+            //查询对应用户总的订阅配置：根据该用户对于该种action的配置，为空则表示全部订阅
+            SubscriptionConfig subscriptionConfig=subscriptionConfigRepository.findByUserInternalIdAndAction(subscription.getUserInternalId(),notify.getAction());
+            if(subscriptionConfig==null||subscriptionConfig.isAllow()){
+                userInternalIds.add(subscription.getUserInternalId());
+            }
+        }
+
+        return userInternalIds;
+    }
+
+    @Override
+    public void saveUserNotify(UserNotify userNotify) {
+        userNotifyRepository.save(userNotify);
+    }
+
     @Override
     public UserNotifyStatus updateUserNotifyStatus(long totalVersionOffset, long readNotifyVersionOffset, long totalUnreadCount, long userInternalId) {
         UserNotifyStatus userNotifyStatus=userNotifyStatusRepository.findByUserInternalId(userInternalId);
