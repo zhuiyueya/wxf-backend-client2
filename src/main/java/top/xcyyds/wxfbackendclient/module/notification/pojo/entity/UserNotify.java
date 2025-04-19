@@ -13,6 +13,8 @@ import java.time.OffsetDateTime;
  * @Version:v1
  */
 @lombok.Data
+@Entity
+@Table
 public class UserNotify {
     /**
      * 创建时间

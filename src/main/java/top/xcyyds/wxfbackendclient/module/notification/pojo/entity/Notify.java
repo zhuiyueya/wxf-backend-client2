@@ -45,12 +45,20 @@ public class Notify {
      */
     private String senderPublicId;
     /**
-     * 目标Id
+     * 被通知源回复/点赞的id
      */
     private long targetId;
     /**
-     * 通知消息关联的对象类型
+     * 被通知源回复/点赞的实体类型
      */
     private TargetType targetType;
+    /**
+     * 发起通知的源id
+     */
+    private long sourceId;
+    /**
+     * 发起通知的源类型
+     */
+    private TargetType sourceType;
 }
 
