@@ -2,7 +2,13 @@ package top.xcyyds.wxfbackendclient.module.notification.service.impl;
 
 import org.springframework.stereotype.Service;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.*;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.enums.NotifyType;
+import top.xcyyds.wxfbackendclient.module.notification.producer.ReminderProducer;
 import top.xcyyds.wxfbackendclient.module.notification.service.INotificationService;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: chasemoon
@@ -12,6 +18,12 @@ import top.xcyyds.wxfbackendclient.module.notification.service.INotificationServ
  */
 @Service("NotificationService")
 public class NotificationService implements INotificationService {
+
+    @Autowired
+    private NotifyRepository notifyRepository;
+
+    @Autowired
+    private ReminderProducer reminderProducer;
     @Override
     public GetUserNotifyResponse getUserNotify(GetUserNotifyRequest request) {
         return null;
