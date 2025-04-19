@@ -1,6 +1,12 @@
 package top.xcyyds.wxfbackendclient.module.notification.service;
 
 import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.*;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.Notify;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.UserNotify;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.UserNotifyStatus;
+
+import java.util.List;
 
 /**
  * @Author: chasemoon
@@ -55,4 +61,6 @@ public interface INotificationService {
      * 根据动作名字获取动作实体
      */
     public SubscriptionActionType getSubscriptionActionType(String actionName);
+
+    public UserNotifyStatus updateUserNotifyStatus(long totalVersionOffset, long readNotifyVersionOffset, long totalUnreadCount, long userInternalId);
 }
