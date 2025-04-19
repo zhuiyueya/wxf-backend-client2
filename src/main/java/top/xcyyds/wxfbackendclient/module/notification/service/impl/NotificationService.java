@@ -10,6 +10,9 @@ import top.xcyyds.wxfbackendclient.module.notification.pojo.enums.NotifyType;
 import top.xcyyds.wxfbackendclient.module.notification.producer.ReminderProducer;
 import top.xcyyds.wxfbackendclient.module.notification.repository.*;
 import top.xcyyds.wxfbackendclient.module.notification.service.INotificationService;
+import top.xcyyds.wxfbackendclient.module.post.service.IPostService;
+import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -97,7 +100,13 @@ public class NotificationService implements INotificationService {
 
     @Override
     public ReadUserNotifyResponse readUserNotify(ReadUserNotifyRequest request) {
-        return null;
+        //将publicId转换为internalId
+        long internalId= userService.getInternalIdByPublicId(request.getUserPublicId());
+        updateUserNotifyStatus(0,0,1,internalId);
+
+        ReadUserNotifyResponse response=new ReadUserNotifyResponse();
+
+        return response;
     }
 
     @Override
