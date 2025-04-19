@@ -20,7 +20,7 @@ public interface INotificationService {
     /*
      * 获取用户通知
      */
-    public GetUserNotifyResponse getUserNotify(GetUserNotifyRequest request);
+    public ListUserNotifysResponse listUserNotify(GetUserNotifyRequest request);
 
     /*
      * 拉取用户的通知到UserNotify

@@ -1,9 +1,15 @@
 package top.xcyyds.wxfbackendclient.module.notification.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.*;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.enums.NotifyType;
@@ -32,6 +38,9 @@ public class NotificationService implements INotificationService {
     private NotifyRepository notifyRepository;
 
     @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
     private UserNotifyStatusRepository userNotifyStatusRepository;
 
     @Autowired
@@ -53,8 +62,70 @@ public class NotificationService implements INotificationService {
     private SubscriptionConfigRepository subscriptionConfigRepository;
 
     @Override
-    public GetUserNotifyResponse getUserNotify(GetUserNotifyRequest request) {
-        return null;
+    public ListUserNotifysResponse listUserNotify(GetUserNotifyRequest request) {
+        //将publicId转换为internalId
+        long internalId= userService.getInternalIdByPublicId(request.getUserPublicId());
+
+        CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+        CriteriaQuery<UserNotify> query=cb.createQuery(UserNotify.class);
+        Root<UserNotify> root=query.from(UserNotify.class);
+
+        List<Predicate> predicates=new ArrayList<>();
+        //等于发送请求用户对应id
+        predicates.add(cb.equal(root.get("userInternalId"), internalId));
+        //若指定了通知类型，则加条件
+        if(request.getNotifyType()!=null)
+            //指定通知类型
+            predicates.add(cb.equal(root.get("notify").get("notifyType"), request.getNotifyType()));
+
+        //时间游标处理
+        if(StringUtils.hasText(request.getTimeCursor())){
+            OffsetDateTime cursorTime=OffsetDateTime.parse(request.getTimeCursor());
+            predicates.add(cb.lessThan(root.get("createdAt"),cursorTime));
+        }
+        //排序
+        query.where(predicates.toArray(new Predicate[0]))
+                .orderBy(cb.desc(root.get("createdAt")));
+
+        //设置最大查询数量并执行查询
+        List<UserNotify>userNotifies=entityManager.createQuery(query)
+                .setMaxResults((int)request.getPageSize())
+                .getResultList();
+
+        return convertToListUserNotifysResponse(userNotifies);
+    }
+
+    private ListUserNotifysResponse convertToListUserNotifysResponse(List<UserNotify> userNotifies) {
+        ListUserNotifysResponse response=new ListUserNotifysResponse();
+        if (userNotifies.size()==0){
+            response.setPageSize(0);
+            return response;
+        }
+
+        List<GetUserNotifyResponse>getUserNotifyResponses=new ArrayList<>();
+
+        for(UserNotify userNotify:userNotifies){
+            GetUserNotifyResponse getUserNotifyResponse=new GetUserNotifyResponse();
+            NotifyType notifyType=userNotify.getNotify().getNotifyType();
+
+            getUserNotifyResponse.setNotifyType(notifyType);
+            getUserNotifyResponse.setCreatedAt(userNotify.getNotify().getCreatedAt());
+            getUserNotifyResponse.setContent(userNotify.getNotify().getContent());
+            getUserNotifyResponse.setUserNotifyId(userNotify.getUserNotifyId());
+            getUserNotifyResponse.setTargetId(userNotify.getNotify().getTargetId());
+            getUserNotifyResponse.setTargetType(userNotify.getNotify().getTargetType());
+            getUserNotifyResponse.setSenderPublicId(userNotify.getNotify().getSenderPublicId());
+            getUserNotifyResponse.setSourceId(userNotify.getNotify().getSourceId());
+            getUserNotifyResponse.setSourceType(userNotify.getNotify().getSourceType());
+            getUserNotifyResponse.setAction(userNotify.getNotify().getAction());
+            getUserNotifyResponse.setState(userNotify.getState());
+
+            getUserNotifyResponses.add(getUserNotifyResponse);
+        }
+        response.setNotifies(getUserNotifyResponses);
+        response.setPageSize(userNotifies.size());
+        response.setTimeCursor(userNotifies.get(userNotifies.size()-1).getNotify().getCreatedAt());
+        return response;
     }
 
     @Override
