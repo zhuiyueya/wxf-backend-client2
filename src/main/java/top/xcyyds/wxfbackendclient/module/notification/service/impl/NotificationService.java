@@ -24,7 +24,26 @@ public class NotificationService implements INotificationService {
 
     @Override
     public CreateReminderResponse createReminder(CreateReminderRequest request) {
-        return null;
+        Notify notify=new Notify();
+        //指定为东八区时间（偏移量“+08：00"）
+        OffsetDateTime beijingTime = OffsetDateTime.now(ZoneOffset.ofHours(8));
+        SubscriptionActionType subscriptionActionType=getSubscriptionActionType(request.getAction());
+        notify.setAction(subscriptionActionType);
+        notify.setTargetId(request.getTargetId());
+        notify.setTargetType(request.getTargetType());
+        notify.setNotifyType(NotifyType.REMINDER);
+        notify.setSenderPublicId(request.getSenderPublicId());
+        notify.setCreatedAt(beijingTime);
+        notify.setSourceId(request.getSourceId());
+        notify.setSourceType(request.getSourceType());
+        notify.setContent(subscriptionActionType.getDisplayTemplate());
+
+        notifyRepository.save(notify);
+
+        CreateReminderResponse response=new CreateReminderResponse();
+
+        reminderProducer.sendReminder(notify.getNotifyId());
+        return response;
     }
 
     @Override
@@ -50,5 +69,10 @@ public class NotificationService implements INotificationService {
     @Override
     public ReadUserNotifyResponse readUserNotify(ReadUserNotifyRequest request) {
         return null;
+    }
+
+    @Override
+    public SubscriptionActionType getSubscriptionActionType(String actionName) {
+        return subscriptionActionTypeRepository.findByActionName(actionName);
     }
 }
