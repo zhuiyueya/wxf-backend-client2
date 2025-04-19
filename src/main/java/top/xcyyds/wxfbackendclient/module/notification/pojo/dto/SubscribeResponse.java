@@ -10,4 +10,5 @@ import lombok.Data;
  */
 @Data
 public class SubscribeResponse {
+    long subscriptionId;
 }

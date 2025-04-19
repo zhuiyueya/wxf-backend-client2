@@ -2,6 +2,7 @@ package top.xcyyds.wxfbackendclient.module.notification.pojo.dto;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class SubscribeRequest {
     /**
      * 通知消息关联的对象类型
      */
-    private String targetType;
+    private TargetType targetType;
     /**
      * 关联的用户id
      */

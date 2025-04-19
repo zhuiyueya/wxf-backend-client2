@@ -164,7 +164,21 @@ public class NotificationService implements INotificationService {
 
     @Override
     public SubscribeResponse subscribe(SubscribeRequest request) {
-        return null;
+        //指定为东八区时间（偏移量“+08：00"）
+        OffsetDateTime beijingTime = OffsetDateTime.now(ZoneOffset.ofHours(8));
+
+        Subscription subscription=new Subscription();
+
+        subscription.setCreatedAt(beijingTime);
+        subscription.setTargetId(request.getTargetId());
+        subscription.setTargetType(request.getTargetType());
+        subscription.setActions(request.getActions());
+        subscription.setUserInternalId(request.getUserInternalId());
+        subscription=subscriptionRepository.save(subscription);
+
+        SubscribeResponse response=new SubscribeResponse();
+        response.setSubscriptionId(subscription.getSubscriptionId());
+        return response;
     }
 
     @Override

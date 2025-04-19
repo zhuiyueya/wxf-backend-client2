@@ -1,6 +1,7 @@
 package top.xcyyds.wxfbackendclient.module.notification.pojo.entity;
 
 import jakarta.persistence.*;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -42,7 +43,7 @@ public class Subscription {
     /**
      * 通知消息关联的对象类型
      */
-    private String targetType;
+    private TargetType targetType;
     /**
      * 关联的用户id
      */
