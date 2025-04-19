@@ -38,5 +38,11 @@ public class NotificationController {
         request.setSenderPublicId(authentication.getPrincipal().toString());
         return Result.success(notificationService.createReminder(request));
     }
+    @GetMapping("/read")
+    public Result<ReadUserNotifyResponse> readNotification(Authentication authentication) {
+        ReadUserNotifyRequest readUserNotifyRequest=new ReadUserNotifyRequest();
+        readUserNotifyRequest.setUserPublicId(authentication.getPrincipal().toString());
+        return Result.success(notificationService.readUserNotify(readUserNotifyRequest));
+    }
 
 }
