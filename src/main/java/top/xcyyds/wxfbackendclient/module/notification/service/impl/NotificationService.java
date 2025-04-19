@@ -30,6 +30,10 @@ public class NotificationService implements INotificationService {
 
     @Autowired
     private UserNotifyStatusRepository userNotifyStatusRepository;
+
+    @Autowired
+    private UserService userService;
+
     @Autowired
     private ReminderProducer reminderProducer;
     @Override
@@ -39,7 +43,12 @@ public class NotificationService implements INotificationService {
 
     @Override
     public PullReminderResponse pullReminder(PullReminderRequest request) {
-        return null;
+        long internalId= userService.getInternalIdByPublicId(request.getUserPublicId());
+        UserNotifyStatus userNotifyStatus=updateUserNotifyStatus(0,1,0,internalId);
+
+        PullReminderResponse pullReminderResponse=new PullReminderResponse();
+        pullReminderResponse.setTotalUnreadCount(userNotifyStatus.getTotalUnreadCount());
+        return pullReminderResponse;
     }
 
     @Override

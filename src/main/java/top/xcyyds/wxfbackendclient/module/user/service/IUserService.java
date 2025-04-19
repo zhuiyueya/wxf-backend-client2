@@ -24,4 +24,6 @@ public interface IUserService {
 
     SummaryAuthorInfo getSummaryAuthorInfoByPublicId(String publicId);
 
+    long getInternalIdByPublicId(String publicId);
+
 }
