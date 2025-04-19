@@ -62,5 +62,11 @@ public interface INotificationService {
      */
     public SubscriptionActionType getSubscriptionActionType(String actionName);
 
+    public Notify getNotifyByNotifyId(long notifyId);
+
+    public List<Long> getSubscriptionUserInternalIdsByNotify(Notify notify);
+
+    public void saveUserNotify(UserNotify userNotify);
+
     public UserNotifyStatus updateUserNotifyStatus(long totalVersionOffset, long readNotifyVersionOffset, long totalUnreadCount, long userInternalId);
 }
