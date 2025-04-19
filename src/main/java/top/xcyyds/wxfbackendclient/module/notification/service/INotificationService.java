@@ -50,4 +50,9 @@ public interface INotificationService {
      * 设置用户通知为已读
      */
     public ReadUserNotifyResponse readUserNotify(ReadUserNotifyRequest request);
+
+    /*
+     * 根据动作名字获取动作实体
+     */
+    public SubscriptionActionType getSubscriptionActionType(String actionName);
 }
