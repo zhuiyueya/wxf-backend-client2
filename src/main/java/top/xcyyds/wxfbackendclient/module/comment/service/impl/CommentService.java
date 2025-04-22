@@ -21,6 +21,11 @@ import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.AddMediaAttachmentRequest;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.IMediaAttachmentService;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.CreateReminderRequest;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.SubscribeRequest;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.SubscribeResponse;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
+import top.xcyyds.wxfbackendclient.module.notification.service.impl.NotificationService;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
 import top.xcyyds.wxfbackendclient.module.post.service.IPostService;
 import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
@@ -53,6 +58,11 @@ public class CommentService implements ICommentService {
     @Autowired
     private  EntityManager entityManager;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    final List<String> subscribeActionTypeNames=List.of("REPLY","LIKE");
+
     @Override
     public AddPostCommentResponse addPostComment(AddPostCommentRequest addPostCommentRequest) {
         //指定为东八区时间（偏移量“+08：00"）
@@ -79,7 +89,55 @@ public class CommentService implements ICommentService {
         comment.setPost(post);
 
         comment=commentRepository.save(comment);
+
+        //创建通知
+        createReminder(comment,true);
+        //订阅通知
+        createSubscription(comment);
+
         return convertToAddPostCommentResponse(comment);
+    }
+
+    /*
+     * 创建评论提醒消息
+     */
+    private void createReminder(Comment comment,Boolean isParent){
+        CreateReminderRequest createReminderRequest=new CreateReminderRequest();
+        createReminderRequest.setSenderPublicId(comment.getPublicId());
+        createReminderRequest.setSourceType(TargetType.COMMENT);
+        createReminderRequest.setSourceId(comment.getCommentId());
+        String acyionName=isParent?"COMMENT":"REPLY";
+        //回复帖子
+        if(isParent){
+            createReminderRequest.setTargetType(TargetType.POST);
+            createReminderRequest.setTargetId(comment.getPost().getPostId());
+        }else{//回复评论
+            createReminderRequest.setTargetType(TargetType.COMMENT);
+            createReminderRequest.setTargetId(comment.getParentCommentId());
+        }
+
+        createReminderRequest.setAction(acyionName);
+        notificationService.createReminder(createReminderRequest);
+    }
+
+    private SubscribeResponse createSubscription(Comment comment){
+        SubscribeRequest subscribeRequest=new SubscribeRequest();
+        //to do:将comment保存的字段改为internalId
+        long internalId=userService.getInternalIdByPublicId(comment.getPublicId());
+        //将对应的actionType字符串转换成entity
+        List<SubscriptionActionType> subscribeActionTypes=new ArrayList<>();
+        for (String subscribeActionTypeName : subscribeActionTypeNames) {
+            SubscriptionActionType subscribeActionType=notificationService.getSubscriptionActionType(subscribeActionTypeName);
+            subscribeActionTypes.add(subscribeActionType);
+        }
+
+        subscribeRequest.setTargetType(TargetType.COMMENT);
+        subscribeRequest.setTargetId(comment.getCommentId());
+        subscribeRequest.setUserInternalId(internalId);
+        subscribeRequest.setActions(subscribeActionTypes);
+
+        SubscribeResponse subscribeResponse=notificationService.subscribe(subscribeRequest);
+        return subscribeResponse;
     }
 
     @Override
@@ -110,6 +168,11 @@ public class CommentService implements ICommentService {
         comment.setReplyToNickname(addChildCommentRequest.getReplyToNickName());
 
         comment=commentRepository.save(comment);
+
+        //创建通知
+        createReminder(comment,false);
+        //订阅通知
+        createSubscription(comment);
         return convertToAddChildCommentResponse(comment);
     }
 
