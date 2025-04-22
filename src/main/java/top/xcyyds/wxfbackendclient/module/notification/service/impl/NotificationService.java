@@ -23,6 +23,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 /**
  * @Author: chasemoon
@@ -60,6 +62,9 @@ public class NotificationService implements INotificationService {
 
     @Autowired
     private SubscriptionConfigRepository subscriptionConfigRepository;
+
+    @Autowired
+    private SubscriptionConfigMetaDataRepository subscriptionConfigMetaDataRepository;
 
     @Override
     public ListUserNotifysResponse listUserNotify(GetUserNotifyRequest request) {
@@ -157,7 +162,7 @@ public class NotificationService implements INotificationService {
         notifyRepository.save(notify);
 
         CreateReminderResponse response=new CreateReminderResponse();
-
+        log.debug("创建提醒成功，提醒id为{},即将把通知自动push到消息队列以同步到userNotify",notify.getNotifyId());
         reminderProducer.sendReminder(notify.getNotifyId());
         return response;
     }
@@ -193,7 +198,25 @@ public class NotificationService implements INotificationService {
 
     @Override
     public GetSubscriptionConfigResponse getSubscriptionConfig(GetSubscriptionConfigRequest request) {
-        return null;
+        long internalId= userService.getInternalIdByPublicId(request.getUserPublicId());
+
+        List<SummarySubscriptionConfigProjection>summarySubscriptionConfigs=subscriptionConfigMetaDataRepository.getUserConfigs(internalId);
+
+
+        GetSubscriptionConfigResponse response=new GetSubscriptionConfigResponse();
+        response.setConfigs(convertToSummarySubscriptionConfigList(summarySubscriptionConfigs));
+        return response;
+    }
+
+    private static List<SummarySubscriptionConfig> convertToSummarySubscriptionConfigList(List<SummarySubscriptionConfigProjection> summarySubscriptionConfigs){
+        for(SummarySubscriptionConfigProjection summarySubscriptionConfigProjection:summarySubscriptionConfigs){
+            log.debug("summarySubscriptionConfigProjection:{},{},{}",summarySubscriptionConfigProjection.getIsAllow(),summarySubscriptionConfigProjection.getActionName(),summarySubscriptionConfigProjection.getConfigId());
+        }
+        return summarySubscriptionConfigs.stream()
+        .map(summarySubscriptionConfigProjection ->
+            new SummarySubscriptionConfig(summarySubscriptionConfigProjection.getConfigId(),
+                    summarySubscriptionConfigProjection.getActionName(),
+                    summarySubscriptionConfigProjection.getIsAllow())).collect(Collectors.toList());
     }
 
     @Override
@@ -220,13 +243,14 @@ public class NotificationService implements INotificationService {
     @Override
     public List<Long> getSubscriptionUserInternalIdsByNotify(Notify notify) {
         //查询订阅了该通知的用户
-        List<Subscription>subscriptionss=subscriptionRepository.findAllByTargetIdAndTargetType(notify.getSourceId(),notify.getSourceType().toString());
+        List<Subscription>subscriptionss=subscriptionRepository.findAllByTargetIdAndTargetType(notify.getTargetId(),notify.getTargetType());
 
         List<Long>userInternalIds=new ArrayList<>();
         for (Subscription subscription:subscriptionss){
-            //查询对应用户总的订阅配置：根据该用户对于该种action的配置，为空则表示全部订阅
-            SubscriptionConfig subscriptionConfig=subscriptionConfigRepository.findByUserInternalIdAndAction(subscription.getUserInternalId(),notify.getAction());
-            if(subscriptionConfig==null||subscriptionConfig.isAllow()){
+            //查询对应用户总的订阅配置：根据该用户对于该种action的配置
+            SummarySubscriptionConfigProjection subscriptionConfig=subscriptionConfigMetaDataRepository.getUserConfigByAction(subscription.getUserInternalId(),notify.getAction());
+            log.debug("用户该项配置为subscriptionConfig:{}|{}",notify.getAction(),subscriptionConfig.getIsAllow());
+            if(subscriptionConfig.getIsAllow()){
                 userInternalIds.add(subscription.getUserInternalId());
             }
         }

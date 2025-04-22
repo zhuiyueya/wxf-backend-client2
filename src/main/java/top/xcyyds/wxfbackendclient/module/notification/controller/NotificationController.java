@@ -44,5 +44,11 @@ public class NotificationController {
         readUserNotifyRequest.setUserPublicId(authentication.getPrincipal().toString());
         return Result.success(notificationService.readUserNotify(readUserNotifyRequest));
     }
+    @GetMapping("/subsrciptionConfig/get")
+    public Result<GetSubscriptionConfigResponse> getUserNotifyConfig(Authentication authentication) {
+        GetSubscriptionConfigRequest getSubscriptionConfigRequest=new GetSubscriptionConfigRequest();
+        getSubscriptionConfigRequest.setUserPublicId(authentication.getPrincipal().toString());
+        return Result.success(notificationService.getSubscriptionConfig(getSubscriptionConfigRequest));
+    }
 
 }
