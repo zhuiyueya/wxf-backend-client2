@@ -13,5 +13,5 @@ import java.time.OffsetDateTime;
  */
 @Data
 public class GetSubscriptionConfigRequest {
-
+    private String userPublicId;
 }

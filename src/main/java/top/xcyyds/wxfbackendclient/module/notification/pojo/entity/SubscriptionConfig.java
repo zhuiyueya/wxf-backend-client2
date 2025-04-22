@@ -22,9 +22,9 @@ public class SubscriptionConfig {
     /**
      * 订阅类型
      */
-    @ManyToOne
-    @JoinColumn(name="subscription_action_type_id")
-    private SubscriptionActionType action;
+//    @ManyToOne
+//    @JoinColumn(name="subscription_action_type_id")
+//    private SubscriptionActionType action;
     /**
      * 是否允许
      */
@@ -33,4 +33,9 @@ public class SubscriptionConfig {
      * 绑定的用户
      */
     private long userInternalId;
+    /**
+     * 对应的配置元数据的id
+     */
+    private long subscriptionConfigMetaDataId;
+
 }
