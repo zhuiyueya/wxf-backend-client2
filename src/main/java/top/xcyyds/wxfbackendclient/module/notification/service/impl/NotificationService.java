@@ -193,7 +193,25 @@ public class NotificationService implements INotificationService {
 
     @Override
     public UpdateSubscriptionConfigResponse updateSubscriptionConfig(UpdateSubscriptionConfigRequest request) {
-        return null;
+
+        long internalId= userService.getInternalIdByPublicId(request.getUserPublicId());
+        SubscriptionConfig subscriptionConfig=subscriptionConfigRepository.findByUserInternalIdAndSubscriptionConfigMetaDataId(internalId,request.getConfigId());
+        SubscriptionConfigMetaData subscriptionConfigMetaData=subscriptionConfigMetaDataRepository.findByConfigId(request.getConfigId());
+        if(subscriptionConfig==null){
+            subscriptionConfig=new SubscriptionConfig();
+            subscriptionConfig.setUserInternalId(internalId);
+            subscriptionConfig.setSubscriptionConfigMetaDataId(subscriptionConfigMetaData.getConfigId());
+            subscriptionConfig.setAllow(request.isAllow());
+        }else {
+            subscriptionConfig.setAllow(request.isAllow());
+        }
+        subscriptionConfig=subscriptionConfigRepository.save(subscriptionConfig);
+        UpdateSubscriptionConfigResponse response=new UpdateSubscriptionConfigResponse();
+        response.setConfigId(subscriptionConfig.getSubscriptionConfigMetaDataId());
+        response.setIsAllow(subscriptionConfig.isAllow());
+
+        response.setActionName(subscriptionConfigMetaData.getAction().getActionName());
+        return response;
     }
 
     @Override

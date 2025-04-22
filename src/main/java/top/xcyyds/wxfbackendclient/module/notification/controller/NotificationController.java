@@ -51,4 +51,10 @@ public class NotificationController {
         return Result.success(notificationService.getSubscriptionConfig(getSubscriptionConfigRequest));
     }
 
+    @PatchMapping("/subscriptionConfig/update")
+    public Result<UpdateSubscriptionConfigResponse> updateUserNotifyConfig(Authentication authentication, @RequestBody UpdateSubscriptionConfigRequest request) {
+        request.setUserPublicId(authentication.getPrincipal().toString());
+        return Result.success(notificationService.updateSubscriptionConfig(request));
+    }
+
 }
