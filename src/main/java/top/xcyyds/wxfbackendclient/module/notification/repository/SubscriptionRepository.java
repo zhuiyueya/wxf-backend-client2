@@ -1,6 +1,7 @@
 package top.xcyyds.wxfbackendclient.module.notification.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.Subscription;
 
 import java.util.List;
@@ -13,5 +14,5 @@ import java.util.List;
  */
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    List<Subscription> findAllByTargetIdAndTargetType(long targetId, String targetType);
+    List<Subscription> findAllByTargetIdAndTargetType(long targetId, TargetType targetType);
 }
