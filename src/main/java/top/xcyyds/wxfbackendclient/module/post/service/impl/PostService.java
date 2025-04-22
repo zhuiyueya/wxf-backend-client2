@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.el.util.ReflectionUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +14,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.UploadMediaResponse;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.impl.SelfOSSService;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.CreateReminderRequest;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.SubscribeRequest;
+import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
+import top.xcyyds.wxfbackendclient.module.notification.service.INotificationService;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.AddPostRequest;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsRequest;
 import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsResponse;
@@ -58,6 +64,11 @@ public class PostService implements IPostService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    @Qualifier("NotificationService")
+    private INotificationService notificationService;
+
+    final List<String> subscribeActionTypeNames=List.of("COMMENT","LIKE");
 
     @Override
     public SummaryPost getPostDetail(long postId) {
@@ -151,9 +162,22 @@ public class PostService implements IPostService {
         Post post=convert2Post(request);
 
         post=postRepository.save(post);
-
-        //log.info("帖子创建成功：{}",post);
+        createSubscription(post);
         return convert2SummaryPost(post, true);
+    }
+
+    private void createSubscription(Post post){
+        SubscribeRequest subscribeRequest=new SubscribeRequest();
+        subscribeRequest.setUserInternalId(userService.getInternalIdByPublicId(post.getPublicId()));
+        subscribeRequest.setTargetType(TargetType.POST);
+        subscribeRequest.setTargetId(post.getPostId());
+        List<SubscriptionActionType>subscriptionActionTypes=new ArrayList<>();
+        for (String subscribeActionTypeName:subscribeActionTypeNames){
+            SubscriptionActionType subscriptionActionType=notificationService.getSubscriptionActionType(subscribeActionTypeName);
+            subscriptionActionTypes.add(subscriptionActionType);
+        }
+        subscribeRequest.setActions(subscriptionActionTypes);
+        notificationService.subscribe(subscribeRequest);
     }
 
     @Override
