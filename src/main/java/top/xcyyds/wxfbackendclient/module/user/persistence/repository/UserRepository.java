@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User findByPublicId(String publicId);
 
     User findByInternalId(long internalId);
+
 }

@@ -2,6 +2,7 @@ package top.xcyyds.wxfbackendclient.module.user.pojo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import top.xcyyds.wxfbackendclient.module.like.pojo.entity.Like;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -81,4 +82,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference//主端，正常序列化，找到绑定的另一张表的数据
     private List<UserAuth> userAuths;
+
+    // 新增：用户关联的点赞记录
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Like> likes;
 }
