@@ -123,6 +123,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public long getInternalIdByPublicId(String publicId) {
+        return userRepository.findByPublicId(publicId).getInternalId();
+    }
+
+    @Override
     //更新用户头像的url
     public GetUserSelfInfoResponse updateUserAvatar(UpdateUserSelfAvatarRequest updateUserSelfAvatarRequest) {
         User user=userRepository.findByPublicId(updateUserSelfAvatarRequest.getPublicId());

@@ -9,7 +9,6 @@ package top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.ToString;
 import top.xcyyds.wxfbackendclient.common.ContentState;
 import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
 import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;

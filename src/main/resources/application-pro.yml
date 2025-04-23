@@ -19,17 +19,26 @@ spring:
     username: your_mysql_username
     password: your_mysql_password
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  sql:
+    init:
+      mode: always # 在启动时执行resource目录下的sql文件
   jpa:
     hibernate:
       ddl-auto: validate # 开发环境可用，生产环境改为 validate
     show-sql: true
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true # 延迟初始化数据源(resource下的sql），直到第一次使用 JPA 时才初始化
   servlet:
     multipart:
       max-file-size: 10MB # 设置单个上传文件的最大大小。如果上传的文件超过了这个大小限制，Spring Boot 会抛出 MaxUploadSizeExceededException 异常。
       max-request-size: 10MB # 设置整个 HTTP 请求的最大大小。这包括所有上传的文件以及其他的请求数据。如果整个请求的大小超过了这个限制，Spring Boot 也会抛出 MaxUploadSizeExceededException 异常。
-
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: your_username
+    password: your_password
 jwt:
   secret: your_secret
   expiration: expire_time
