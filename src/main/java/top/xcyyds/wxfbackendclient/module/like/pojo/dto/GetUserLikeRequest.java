@@ -1,7 +1,7 @@
-package top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.dto;
+package top.xcyyds.wxfbackendclient.module.like.pojo.dto;
 
 import lombok.Data;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums.TargetType;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 
 /**
  * @Author: theManager
@@ -10,7 +10,7 @@ import top.xcyyds.wxfbackendclient.module.like.pojo.entity.pojo.enums.TargetType
  * @Version:
  */
 @Data
-public class GetUserLikeResponse {
+public class GetUserLikeRequest {
     private long targetId;
     private TargetType targetType;
 }

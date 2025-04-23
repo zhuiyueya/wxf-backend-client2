@@ -17,7 +17,7 @@ import top.xcyyds.wxfbackendclient.module.comment.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
 import top.xcyyds.wxfbackendclient.module.comment.repository.CommentRepository;
 import top.xcyyds.wxfbackendclient.module.comment.service.ICommentService;
-import top.xcyyds.wxfbackendclient.module.like.pojo.entity.TargetType;
+import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.AddMediaAttachmentRequest;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.IMediaAttachmentService;

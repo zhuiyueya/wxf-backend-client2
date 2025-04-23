@@ -47,4 +47,7 @@ public class GetUserSelfInfoResponse {
      */
     private long role;
 
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 }
