@@ -1,0 +1,58 @@
+wx:
+  ma:
+    configs:
+      - appid: wxebba1cc1e15dfb16  # 替换为实际值
+        secret: b31d59cab0355baf1e19abdbafe020ac    # 替换为实际值
+        token: verif_token         # 消息校验 Token（非必填）
+        aesKey: encryption_key     # 消息加密密钥（非必填）
+
+app:
+  id-generator:
+    hmac-secret: test-hmac-secret-12345@myapp-2024!DoNOTuseInProd # 建议使用环境变量注入
+    snowflake:
+      worker-id: ${SNOWFLAKE_WORKER_ID:0}
+      datacenter-id: ${SNOWFLAKE_DATACENTER_ID:0}
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/wxf?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  sql:
+    init:
+      mode: always # 在启动时执行resource目录下的sql文件
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 开发环境可用，生产环境改为 validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    defer-datasource-initialization: true # 延迟初始化数据源(resource下的sql），直到第一次使用 JPA 时才初始化
+
+  servlet:
+    multipart:
+      max-file-size: 200MB # 设置单个上传文件的最大大小。如果上传的文件超过了这个大小限制，Spring Boot 会抛出 MaxUploadSizeExceededException 异常。
+      max-request-size: 200MB # 设置整个 HTTP 请求的最大大小。这包括所有上传的文件以及其他的请求数据。如果整个请求的大小超过了这个限制，Spring Boot 也会抛出 MaxUploadSizeExceededException 异常。
+  rabbitmq:
+    host: 8.148.21.215
+    port: 5672
+    username: chasemoon
+    password: chasemoon567
+
+jwt:
+  secret: aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789abCDefGH=
+  expiration: 36000000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    io.jsonwebtoken: DEBUG
+    org.apache.catalina.core.ContainerBase.[Catalina].[localhost]: DEBUG
+    org.hibernate.SQL: DEBUG
+    rg.hibernate.type.descriptor.sql.BasicBinder: TRACE
