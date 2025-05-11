@@ -122,6 +122,13 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
+        <!-- 社区集成封装canal -->
+        <dependency>
+            <groupId>io.github.lontten</groupId>
+            <artifactId>canal-spring-boot-starter</artifactId>
+            <version>2.117.11.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>

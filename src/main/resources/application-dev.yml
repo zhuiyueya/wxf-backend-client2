@@ -43,10 +43,33 @@ spring:
     port: 5672
     username: chasemoon
     password: chasemoon567
-
+  data:
+    elasticsearch:
+      uris: http://127.0.0.1:9200
 jwt:
   secret: aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789abCDefGH=
   expiration: 36000000
+
+lontten:
+  canal:
+    destination: example   # 订阅的 canal 订阅实例
+    dbName: wxf          # 数据库名字
+
+    retryInterval: 60     # 重试间隔，单位秒，默认60秒
+    maxRetryTimes: 10     # 最大重试次数,默认-1，无限制
+
+    batchSize: 1000       # 每次轮训，拉取数量大小，默认 1000
+    batchInterval: 1      # 每次轮训，拉取间隔，单位秒，默认 1秒
+
+    enableLog: true       # 是否打印日志,默认 true
+
+    username: canal       # canal server 账号
+    password: canal       # canal server 密码
+
+    # 1. 单例模式
+    ip: 127.0.0.1       # canal server ip,默认 127.0.0.1
+    port: 11111         # canal server 端口,默认 11111
+
 
 logging:
   level:
