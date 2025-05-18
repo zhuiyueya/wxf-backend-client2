@@ -14,7 +14,16 @@ import java.io.IOException;
  * 附件所属的内容类型
  */
 public enum TargetType {
-    COMMENT, POST;
+    COMMENT(0,"COMMENT"),
+    POST(1,"POST");
+
+    private final int code;
+    private final String value;
+
+    TargetType(int code, String value) {
+        this.code = code;
+        this.value = value;
+    }
 
     public String toValue() {
         switch (this) {
