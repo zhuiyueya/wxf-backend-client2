@@ -1,8 +1,11 @@
 package top.xcyyds.wxfbackendclient.module.post.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -23,9 +26,10 @@ import java.util.List;
  */
 @Data
 @Document(indexName = "post")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PostEsDocument {
     @Id // 标记为 Elasticsearch 文档的 ID
-    private Long postId;
+    private String postId;
 
     @Field(type = FieldType.Keyword) // 通常用于精确匹配、聚合和排序的ID
     private String publicId;
@@ -34,6 +38,7 @@ public class PostEsDocument {
     private String content;
 
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time) // 日期时间类型
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
     private OffsetDateTime createTime;
 
     @Field(type = FieldType.Keyword) // 枚举类型通常映射为 Keyword，用于精确过滤
