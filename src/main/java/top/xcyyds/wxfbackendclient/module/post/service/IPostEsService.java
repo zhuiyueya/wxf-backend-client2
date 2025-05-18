@@ -1,5 +1,7 @@
 package top.xcyyds.wxfbackendclient.module.post.service;
 
+import top.xcyyds.wxfbackendclient.module.post.pojo.entity.PostEsDocument;
+
 /**
  * @Author: chasemoon
  * @CreateTime: 2025-05-10
@@ -8,4 +10,5 @@ package top.xcyyds.wxfbackendclient.module.post.service;
  */
 
 public interface IPostEsService {
+    void addPostToEs(PostEsDocument post);
 }
