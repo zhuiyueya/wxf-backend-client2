@@ -47,7 +47,7 @@ public class Like {
 
     // 关联用户
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "publicId", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "internalId", insertable = false, updatable = false)
     private User user;
 
     // 关联帖子
