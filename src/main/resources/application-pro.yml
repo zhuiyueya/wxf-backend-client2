@@ -39,6 +39,12 @@ spring:
     port: 5672
     username: your_username
     password: your_password
+
+  elasticsearch:
+    uris: http://127.0.0.1:9200
+    connection-timeout: 3s
+    username: elastic
+    password: elastic
 jwt:
   secret: your_secret
   expiration: expire_time
