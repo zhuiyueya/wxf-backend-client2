@@ -76,4 +76,12 @@ public class MediaAttachment {
     @JoinColumn(name = "comment_id")
     @JsonBackReference//标记为从端，不进行序列化，即搜索时不再对应的另一张表
     private Comment comment;
+
+    // 在帖子id生成后异步调用该函数来设置targetId
+    @PrePersist
+    private void syncTargetId() {
+        if (this.post != null) {
+            this.targetId = this.post.getPostId();
+        }
+    }
 }

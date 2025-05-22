@@ -39,23 +39,29 @@ public class MediaAttachmentService implements IMediaAttachmentService {
 
         //设置字段
         MediaAttachment newMediaAttachment=new MediaAttachment();
-        //newMediaAttachment.setTargetId(addMediaAttachmentRequest.getTargetId());
+
         newMediaAttachment.setTargetType(addMediaAttachmentRequest.getTargetType());
         newMediaAttachment.setPublicId(addMediaAttachmentRequest.getPublicId());
         newMediaAttachment.setStoragePath(uploadMediaResponse.getMediaPath());
         newMediaAttachment.setUploadTime(beijingTime);
         newMediaAttachment.setFileSize(0L);
         switch(addMediaAttachmentRequest.getTargetType()){
-            case POST:
-                newMediaAttachment.setPost((Post)addMediaAttachmentRequest.getTarget());
+            case POST: {
+                newMediaAttachment.setPost((Post) addMediaAttachmentRequest.getTarget());
+                newMediaAttachment.setTargetId(((Post) addMediaAttachmentRequest.getTarget()).getPostId());
                 break;
-            case COMMENT:
-                newMediaAttachment.setComment((Comment)addMediaAttachmentRequest.getTarget());
+            }
+            case COMMENT: {
+                newMediaAttachment.setComment((Comment) addMediaAttachmentRequest.getTarget());
+                newMediaAttachment.setTargetId(((Comment) addMediaAttachmentRequest.getTarget()).getCommentId());
                 break;
+            }
             default:
                 break;
         }
-        return mediaAttachmentRepository.save(newMediaAttachment);
+        //通过在post表和comment表中配置级联保存操作来保存对于的帖子
+        //return mediaAttachmentRepository.save(newMediaAttachment);
+        return newMediaAttachment;
     }
 
     @Override
