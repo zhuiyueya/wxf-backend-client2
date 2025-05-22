@@ -107,6 +107,9 @@ public class UserService implements IUserService {
     @Override
     public GetUserInfoResponse getUserInfo(GetUserInfoRequest getUserInfoRequest) {
         User user=userRepository.findByPublicId(getUserInfoRequest.getPublicId());
+        if (user==null){
+            return null;
+        }
         GetUserInfoResponse getUserInfoResponse=new GetUserInfoResponse();
         BeanUtils.copyProperties(user,getUserInfoResponse);
         return getUserInfoResponse;
@@ -117,6 +120,9 @@ public class UserService implements IUserService {
         GetUserInfoRequest getUserInfoRequest=new GetUserInfoRequest();
         getUserInfoRequest.setPublicId(publicId);
         GetUserInfoResponse getUserInfoResponse=getUserInfo(getUserInfoRequest);
+        if (getUserInfoResponse==null){
+            return null;
+        }
         SummaryAuthorInfo summaryAuthorInfo=new SummaryAuthorInfo();
         BeanUtils.copyProperties(getUserInfoResponse,summaryAuthorInfo);
         return summaryAuthorInfo;
