@@ -4,17 +4,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 import top.xcyyds.wxfbackendclient.module.comment.pojo.entity.Comment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachmentEsDocument;
 import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -29,6 +32,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostEsDocument {
     @Id // 标记为 Elasticsearch 文档的 ID
+    @Field(type = FieldType.Keyword)
     private String postId;
 
     @Field(type = FieldType.Keyword) // 通常用于精确匹配、聚合和排序的ID
@@ -37,8 +41,14 @@ public class PostEsDocument {
     @Field(type = FieldType.Text, analyzer = "standard") // 帖子正文，用于全文搜索，可指定分词器
     private String content;
 
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time) // 日期时间类型
+    //@Field(type = FieldType.Date_Nanos) // 日期时间类型
+    @Field(type = FieldType.Date_Nanos,
+            format = {},
+            pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][.SSSSSS]XXX")
     private OffsetDateTime createTime;
 
     @Field(type = FieldType.Keyword) // 枚举类型通常映射为 Keyword，用于精确过滤
@@ -57,7 +67,7 @@ public class PostEsDocument {
     private Long replyCount;
 
     @Field(type = FieldType.Long)
-    private long shareCount;
+    private Long shareCount;
 
     @Field(type = FieldType.Long) // 或者是 Keyword 如果您打算将其映射为字符串状态
     private Long status; // 如果这个status会转成 "NORMAL", "DELETED" 等字符串，则用 Keyword
@@ -71,3 +81,4 @@ public class PostEsDocument {
     @Field(type = FieldType.Nested) // 关键！用于内嵌对象列表
     private List<MediaAttachmentEsDocument> mediaAttachments;
 }
+
