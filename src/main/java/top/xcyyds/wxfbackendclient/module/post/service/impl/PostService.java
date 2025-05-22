@@ -1,5 +1,17 @@
 package top.xcyyds.wxfbackendclient.module.post.service.impl;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.json.JsonData;
+import co.elastic.clients.transport.TransportException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.el.util.ReflectionUtil;
@@ -14,20 +26,24 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
+import top.xcyyds.wxfbackendclient.common.ContentState;
 import top.xcyyds.wxfbackendclient.module.like.pojo.enums.TargetType;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.MediaAttachmentRepository;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.AddMediaAttachmentRequest;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.SummaryMediaAttachment;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.dto.UploadMediaResponse;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachment;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.pojo.entity.MediaAttachmentEsDocument;
+import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.impl.MediaAttachmentService;
 import top.xcyyds.wxfbackendclient.module.mediaAttachment.service.impl.SelfOSSService;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.CreateReminderRequest;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.dto.SubscribeRequest;
 import top.xcyyds.wxfbackendclient.module.notification.pojo.entity.SubscriptionActionType;
 import top.xcyyds.wxfbackendclient.module.notification.service.INotificationService;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.AddPostRequest;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsRequest;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsResponse;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.SummaryPost;
+import top.xcyyds.wxfbackendclient.module.post.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.post.pojo.entity.Post;
+import top.xcyyds.wxfbackendclient.module.post.pojo.entity.PostEsDocument;
 import top.xcyyds.wxfbackendclient.module.post.pojo.enums.PostType;
 import top.xcyyds.wxfbackendclient.module.post.pojo.enums.SortType;
 import top.xcyyds.wxfbackendclient.module.post.repository.PostRepository;
@@ -37,6 +53,7 @@ import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserInfoRequest;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.GetUserInfoResponse;
 import top.xcyyds.wxfbackendclient.module.user.pojo.dto.SummaryAuthorInfo;
 import top.xcyyds.wxfbackendclient.module.user.service.impl.UserService;
+import top.xcyyds.wxfbackendclient.util.EsSearchAfterUtil;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -44,9 +61,12 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.Long.min;
+//import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
 /**
  * @Author: chasemoon
@@ -65,10 +85,20 @@ public class PostService implements IPostService {
     private UserService userService;
 
     @Autowired
+    private ElasticsearchClient elasticsearchClient;
+
+    @Autowired
     @Qualifier("NotificationService")
     private INotificationService notificationService;
 
     final List<String> subscribeActionTypeNames=List.of("COMMENT","LIKE");
+    @Autowired
+    private RestClient.Builder builder;
+
+    @Autowired
+    private MediaAttachmentRepository mediaAttachmentRepository;
+    @Autowired
+    private MediaAttachmentService mediaAttachmentService;
 
     @Override
     public SummaryPost getPostDetail(long postId) {
@@ -185,6 +215,185 @@ public class PostService implements IPostService {
         return postRepository.findByPostId(postId);
     }
 
+    @Override
+    public ListPostsResponse searchPosts(SearchPostRequest request) {
+        try{
+            SearchRequest.Builder builder=new SearchRequest.Builder()
+                    .index("post")
+                    .size((int)request.getPageSize())
+                    .query(buildQuery(request))//构建查询条件
+                    ;
+
+            //添加排序规则
+            List<SortOptions>sortOptions=buildSortType(request.getSortType(),request.getSortOrder());
+            sortOptions.forEach(builder::sort);
+            List<FieldValue>searchAfterValue=EsSearchAfterUtil.deserialize(request.getTimeCursor());
+            //添加时间游标
+            Optional.ofNullable(searchAfterValue).filter(
+                    sa->!sa.isEmpty()
+                    )
+                    .ifPresent(
+                            sa->builder.searchAfter(sa)
+                    );
+
+            //执行es搜索
+            SearchResponse<PostEsDocument> response = elasticsearchClient.search(
+                    builder.build(),
+                    PostEsDocument.class
+            );
+
+            //获取搜索结果
+            List<Hit<PostEsDocument>>hits=response.hits().hits();
+
+            //若搜索结果为空，则返回null
+            if (hits.isEmpty()){
+                return null;
+            }
+
+            //获取时间游标
+            List<FieldValue>searchAfterValues=hits.get(hits.size()-1).sort();
+
+            //构建返回信息
+            ListPostsResponse listPostsResponse=new ListPostsResponse();
+            List<SummaryPost>summaryPosts=new ArrayList<>();
+            for (Hit<PostEsDocument> hit:hits){
+                SummaryPost summaryPost=convert2SummaryPost(hit.source(),true);
+                summaryPosts.add(summaryPost);
+            }
+            log.debug("搜索到{}条帖子",summaryPosts.size());
+            listPostsResponse.setPosts(summaryPosts);
+            listPostsResponse.setTotalPosts(response.hits().total().value());
+            listPostsResponse.setPageSize((long) response.hits().hits().size());
+            listPostsResponse.setTimeCursor(EsSearchAfterUtil.serialize(searchAfterValues));
+
+            return listPostsResponse;
+        }catch (ElasticsearchException e) {
+            // 处理服务端明确的错误（如索引不存在、查询语法错误）
+            log.error("Elasticsearch 服务端错误: {}", e.getMessage());
+            throw new RuntimeException("搜索失败："+e);
+        } catch (TransportException e) {
+            // 处理网络层错误（如连接超时、SSL 证书问题）
+            log.error("传输层错误: {}", e.getMessage());
+            throw new RuntimeException("搜索失败："+e);
+        }
+        catch (Exception e){
+
+            throw new RuntimeException("搜索失败："+e);
+        }
+
+    }
+
+    /*
+     * 将PostEsDocument转换为SummaryPost
+     */
+    private SummaryPost convert2SummaryPost(PostEsDocument post,boolean withFullContent){
+        SummaryPost summaryPost=new SummaryPost();
+        BeanUtils.copyProperties(post,summaryPost);
+        summaryPost.setPostId(Long.parseLong(post.getPostId()));
+        List<SummaryMediaAttachment>summaryMediaAttachments=new ArrayList<>();
+        for (MediaAttachmentEsDocument mediaAttachment:post.getMediaAttachments()){
+            SummaryMediaAttachment summaryMediaAttachment=new SummaryMediaAttachment();
+            BeanUtils.copyProperties(mediaAttachment,summaryMediaAttachment);
+            summaryMediaAttachments.add(summaryMediaAttachment);
+        }
+        summaryPost.setSummaryMediaAttachment(summaryMediaAttachments);
+        summaryPost.setComplete(withFullContent);
+        summaryPost.setAuthorInfo(userService.getSummaryAuthorInfoByPublicId(post.getPublicId()));
+
+        return summaryPost;
+    }
+
+    /*
+     * 构建es查询条件
+     */
+    private Query buildQuery(SearchPostRequest request){
+        BoolQuery.Builder builder=new BoolQuery.Builder();
+
+        //若用户查询时指定了关键词
+        if (request.getKeyword()!=null&&!"".equals(request.getKeyword())) {
+            builder.must(
+                    m -> m.match(
+                            ma -> ma.field("content").query(request.getKeyword())
+                    )
+            );
+        }else {//若用户查询时没有指定了关键词
+            builder.must(m->m.matchAll(ma->ma));
+        }
+
+        //过滤状态为发布的帖子
+        builder.filter(
+                f->f.term(t->t.field("status").value(ContentState.PUBLISHED.getCode()))
+        );
+
+        //若用户查询时指定了帖子类型
+        if (request.getPostType()!=null&&PostType.isValid(request.getPostType())){
+            builder.filter(
+                    f->f.term(t->t.field("postType").value(request.getPostType()))
+            );
+        }
+
+        //若用户查询时指定了用户对外的publicId
+        if (request.getUserPublicId()!=null&&!request.getUserPublicId().isEmpty()){
+            builder.filter(
+                    f->f.term(t->t.field("publicId").value(request.getUserPublicId()))
+            );
+        }
+
+        Query query=Query.of(b->b.bool(builder.build()));
+        return query;
+
+    }
+
+    /*
+     * 构建es查询排序条件
+     */
+    private List<SortOptions> buildSortType(String sortTypeStr,String sortOrderStr) {
+        List<SortOptions>sortOptions=new ArrayList<>();
+
+        // 根据sortTypeStr和sortOrderStr构建排序条件变量
+        SortType sortType=SortType.valueOf(sortTypeStr);
+        SortOrder sortOrder="DESC".equals(sortOrderStr)?SortOrder.Desc:SortOrder.Asc;
+
+        //根据sortType和sortOrder构建排序条件
+        switch (sortType){
+            case TIME_DESCENDING:
+            case TIME_ASCENDING: {
+                sortOptions.add(SortOptions.of(so -> so.field(f -> f.field(sortType.getEsFieldNameCreateTime(TargetType.POST)).order(sortOrder))
+                ));
+//                //若创建时间相同则使用id进行排序
+//                sortOptions.add(SortOptions.of(so -> so.field(f -> f.field(sortType.getEsFieldNameId(TargetType.POST)).order(sortOrder))));
+                break;
+            }
+            case HOT: {
+                long currentTimeMillis = System.currentTimeMillis();
+                String scriptSource = """
+                        long createTimeMillis = doc['createTime'].value.toInstant().toEpochMilli();
+                        double ageDays=(params.currentTimeMillis-createTimeMillis)/86400000.0;
+                        double decayFactor=Math.exp(-0.2*ageDays);
+                        (doc['viewCount'].value*0.2+doc['likeCount'].value*0.3+doc['replyCount'].value*0.5)*decayFactor
+                        """;
+                sortOptions.add(SortOptions.of(s -> s
+                        .script(s1 -> s1
+                                .script(s2 -> s2
+                                        .source(scriptSource)
+                                        .lang("painless")
+                                        .params(Map.of("currentTimeMillis", JsonData.of(currentTimeMillis)))
+                                )
+                                .order(
+                                        sortOrder
+                                ).type(ScriptSortType.Number)
+                        )
+                ));
+                break;
+            }
+
+        }
+
+        //若创建时间相同/热度相同则使用id进行排序
+        sortOptions.add(SortOptions.of(so -> so.field(f -> f.field(sortType.getEsFieldNameId(TargetType.POST)).order(sortOrder))));
+        return sortOptions;
+    }
+
 
     private Post convert2Post(AddPostRequest request) {
         Post post=new Post();
@@ -207,12 +416,19 @@ public class PostService implements IPostService {
         log.info("媒体附件的数量：{}",request.getMediaAttachments().size());
         for(int i=0;i<request.getMediaAttachments().size();i++){
             log.info("正在处理第{}个媒体附件：{}",i,request.getMediaAttachments().get(i).getOriginalFilename());
-            UploadMediaResponse uploadMediaResponse=selfOSSService.uploadMedia(request.getMediaAttachments().get(i),"/pic");
-            MediaAttachment mediaAttachment=new MediaAttachment();
-            mediaAttachment.setPost(post);
-            mediaAttachment.setPublicId(post.getPublicId());
-            mediaAttachment.setStoragePath(uploadMediaResponse.getMediaPath());
-            mediaAttachment.setUploadTime(beijingTime);
+            AddMediaAttachmentRequest addMediaAttachmentRequest=new AddMediaAttachmentRequest();
+            addMediaAttachmentRequest.setTarget(post);
+            addMediaAttachmentRequest.setMediaAttachment(request.getMediaAttachments().get(i));
+            addMediaAttachmentRequest.setTargetType(TargetType.POST);
+            addMediaAttachmentRequest.setPublicId(post.getPublicId());
+
+            MediaAttachment mediaAttachment=mediaAttachmentService.addMediaAttachment(addMediaAttachmentRequest);
+//            UploadMediaResponse uploadMediaResponse=selfOSSService.uploadMedia(request.getMediaAttachments().get(i),"/pic");
+//            MediaAttachment mediaAttachment=new MediaAttachment();
+//            mediaAttachment.setPost(post);
+//            mediaAttachment.setPublicId(post.getPublicId());
+//            mediaAttachment.setStoragePath(uploadMediaResponse.getMediaPath());
+//            mediaAttachment.setUploadTime(beijingTime);
             post.getMediaAttachments().add(mediaAttachment);
         }
 
