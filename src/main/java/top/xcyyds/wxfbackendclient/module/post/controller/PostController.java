@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import top.xcyyds.wxfbackendclient.common.Result;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.AddPostRequest;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsRequest;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.ListPostsResponse;
-import top.xcyyds.wxfbackendclient.module.post.pojo.dto.SummaryPost;
+import top.xcyyds.wxfbackendclient.module.post.pojo.dto.*;
 import top.xcyyds.wxfbackendclient.module.post.service.impl.PostService;
 
 /**
@@ -37,5 +34,9 @@ public class PostController {
         request.setPublicId(authentication.getPrincipal().toString());
 
         return Result.success(postService.addPost(request));
+    }
+    @PostMapping("/search")
+    public Result<ListPostsResponse> searchPosts(@RequestBody SearchPostRequest request) {
+        return Result.success(postService.searchPosts(request));
     }
 }
