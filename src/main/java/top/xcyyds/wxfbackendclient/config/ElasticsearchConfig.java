@@ -45,26 +45,26 @@ public class ElasticsearchConfig {
         RestClientTransport transport = new RestClientTransport(restClient, jacksonJsonpMapper);
         return new ElasticsearchClient(transport);
     }
-
-    //使用微秒级别
-    @Bean
-    public ElasticsearchCustomConversions elasticsearchCustomConversions() {
-        return new ElasticsearchCustomConversions(
-                List.of(new OffsetDateTimeToNanosConverter())
-        );
-    }
-
-    @WritingConverter
-    static class OffsetDateTimeToNanosConverter implements GenericConverter {
-        @Override
-        public Set<ConvertiblePair> getConvertibleTypes() {
-            return Set.of(new ConvertiblePair(OffsetDateTime.class, String.class));
-        }
-
-        @Override
-        public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-            OffsetDateTime dateTime = (OffsetDateTime) source;
-            return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"));
-        }
-    }
+//
+//    //使用微秒级别
+//    @Bean
+//    public ElasticsearchCustomConversions elasticsearchCustomConversions() {
+//        return new ElasticsearchCustomConversions(
+//                List.of(new OffsetDateTimeToNanosConverter())
+//        );
+//    }
+//
+//    @WritingConverter
+//    static class OffsetDateTimeToNanosConverter implements GenericConverter {
+//        @Override
+//        public Set<ConvertiblePair> getConvertibleTypes() {
+//            return Set.of(new ConvertiblePair(OffsetDateTime.class, String.class));
+//        }
+//
+//        @Override
+//        public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+//            OffsetDateTime dateTime = (OffsetDateTime) source;
+//            return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"));
+//        }
+//    }
 }

@@ -42,7 +42,7 @@ public class PostEsDocument {
     private String content;
 
     //@Field(type = FieldType.Date_Nanos) // 日期时间类型
-    @Field(type = FieldType.Date_Nanos,
+    @Field(type = FieldType.Date,
             format = {},
             pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
